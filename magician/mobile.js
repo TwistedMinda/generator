@@ -356,8 +356,8 @@ function updateMobileInput(deltaTime) {
     if (!IS_MOBILE) return;
     
     // Convert joystick input to key states and camera rotation
-    const moveThreshold = 0.2; // Lower threshold for easier triggering
-    const cameraThreshold = 0.1; // Lower threshold for camera
+    const moveThreshold = 0.25; // Slightly stricter to avoid accidental movement
+    const cameraThreshold = 0.12; // Lower threshold for camera
     
     // Clear movement keys every frame, then set based on current joystick state
     // This ensures when joystick returns to 0, movement stops
@@ -382,7 +382,7 @@ function updateMobileInput(deltaTime) {
     
     // Apply camera rotation based on camera joystick
     if (Math.abs(touchControls.camera.x) > cameraThreshold || Math.abs(touchControls.camera.y) > cameraThreshold) {
-        const sensitivity = 0.05; // Camera sensitivity
+        const sensitivity = 0.03; // Lower sensitivity for mobile joystick
         
         gameState.player.rotation.y -= touchControls.camera.x * sensitivity;
         gameState.player.rotation.x -= touchControls.camera.y * sensitivity;

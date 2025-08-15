@@ -81,7 +81,7 @@ function createFaerie() {
     group.userData = {
         health: health,
         maxHealth: health,
-        speed: 1.5 + Math.random() * 0.75, // Much slower - divided by 2
+        speed: 0.4 + Math.random() * 0.3, // Extremely slow for mobile friendliness
         attackDamage: isElite ? 20 : 15,
         attackCooldown: 0,
         attackRange: 2,

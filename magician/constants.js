@@ -1,7 +1,7 @@
 // Global constants and environment helpers
 
 // Version displayed in HUD
-const VERSION = 'v1.17';
+const VERSION = 'v1.18';
 
 // Force mobile mode on web for testing (when true, we behave as mobile even on desktop)
 const TESTING_MOBILE_ON_WEB = true;
