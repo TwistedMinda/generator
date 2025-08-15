@@ -81,9 +81,7 @@ function updateFPS(currentTime) {
         const fps = Math.round((frameCount * 1000) / (currentTime - lastFPSTime));
         
         // Optional FPS display for debugging
-        if (window.DEBUG_MODE) {
-            console.log(`FPS: ${fps}`);
-        }
+        
         
         frameCount = 0;
         lastFPSTime = currentTime;

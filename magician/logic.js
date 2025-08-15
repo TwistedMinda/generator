@@ -1,7 +1,6 @@
 // Main game logic and flow
 
 function initGame() {
-    console.log('Initializing Magician Game...');
     
     // Initialize core systems
     initScene();
@@ -20,7 +19,7 @@ function initGame() {
     // Start ambient audio
     startAmbientAudio();
     
-    console.log('Game initialized successfully!');
+    
 }
 
 function updateGameLogic(deltaTime) {

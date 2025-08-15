@@ -393,7 +393,6 @@ function takeDamage(amount) {
     
     if (gameState.player.health <= 0) {
         // Game over logic would go here
-        console.log('Game Over!');
     }
     
     createScreenFlash('#ff0000', 300);

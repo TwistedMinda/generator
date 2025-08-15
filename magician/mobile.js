@@ -1,5 +1,8 @@
 // Mobile controls for touch devices
 
+// App version (displayed in HUD)
+const VERSION = 'v1.0.2';
+
 // Set this to true to test mobile controls on web browsers
 const TESTING_MOBILE_ON_WEB = true;
 
@@ -21,7 +24,7 @@ function initMobileControls() {
                (navigator.maxTouchPoints > 0);
     
     if (isMobile) {
-        console.log('Mobile device detected - initializing touch controls');
+        
         createMovementJoystick();
         createCameraJoystick();
         createSpellButtons();
@@ -126,16 +129,12 @@ function setupJoystick(container, knob, type) {
             touchControls.movement.x = knobX / maxDistance;
             touchControls.movement.y = -knobY / maxDistance; // Invert Y for forward/back
             
-            if (TESTING_MOBILE_ON_WEB) {
-                console.log('Movement joystick:', touchControls.movement.x.toFixed(2), touchControls.movement.y.toFixed(2));
-            }
+            
         } else if (type === 'camera') {
             touchControls.camera.x = knobX / maxDistance;
             touchControls.camera.y = knobY / maxDistance; // Don't invert for camera
             
-            if (TESTING_MOBILE_ON_WEB) {
-                console.log('Camera joystick:', touchControls.camera.x.toFixed(2), touchControls.camera.y.toFixed(2));
-            }
+            
         }
     }
     
@@ -390,31 +389,15 @@ function updateMobileInput(deltaTime) {
     // Set movement keys based on current joystick position
     if (touchControls.movement.y > moveThreshold) {
         gameState.keys['keyw'] = true;
-        if (TESTING_MOBILE_ON_WEB) console.log('Setting W key');
     }
     if (touchControls.movement.y < -moveThreshold) {
         gameState.keys['keys'] = true;
-        if (TESTING_MOBILE_ON_WEB) console.log('Setting S key');
     }
     if (touchControls.movement.x < -moveThreshold) {
         gameState.keys['keya'] = true;
-        if (TESTING_MOBILE_ON_WEB) console.log('Setting A key');
     }
     if (touchControls.movement.x > moveThreshold) {
         gameState.keys['keyd'] = true;
-        if (TESTING_MOBILE_ON_WEB) console.log('Setting D key');
-    }
-    
-    // Debug: Show current joystick and key state
-    if (TESTING_MOBILE_ON_WEB && (Math.abs(touchControls.movement.x) > 0.01 || Math.abs(touchControls.movement.y) > 0.01)) {
-        console.log('Joystick:', touchControls.movement.x.toFixed(2), touchControls.movement.y.toFixed(2), 'Keys:', Object.keys(gameState.keys).filter(k => k.startsWith('key')));
-    }
-    
-    // Debug: Show when no movement is detected
-    if (TESTING_MOBILE_ON_WEB && (Math.abs(touchControls.movement.x) > 0.1 || Math.abs(touchControls.movement.y) > 0.1)) {
-        if (!gameState.keys['keyw'] && !gameState.keys['keys'] && !gameState.keys['keya'] && !gameState.keys['keyd']) {
-            console.log('Movement detected but no keys set! Values:', touchControls.movement.x, touchControls.movement.y);
-        }
     }
     
     // Apply camera rotation based on camera joystick
@@ -426,10 +409,6 @@ function updateMobileInput(deltaTime) {
         
         // Clamp vertical rotation
         gameState.player.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, gameState.player.rotation.x));
-        
-        if (TESTING_MOBILE_ON_WEB) {
-            console.log('Camera rotation:', touchControls.camera.x.toFixed(2), touchControls.camera.y.toFixed(2));
-        }
     }
 }
 
@@ -446,15 +425,10 @@ function adjustUIForMobile() {
     }
     
     // Handle desktop cooldown icons vs mobile spell buttons
-    const cooldownContainer = document.querySelector('.absolute.bottom-4.left-4.flex.space-x-3');
+    const cooldownContainer = document.getElementById('desktop-spell-cooldowns');
     if (cooldownContainer) {
-        if (TESTING_MOBILE_ON_WEB) {
-            // When testing mobile on web, hide desktop cooldowns to avoid duplication
-            cooldownContainer.style.display = 'none';
-        } else {
-            // On real mobile devices, completely hide desktop cooldowns since we have mobile buttons
-            cooldownContainer.style.display = 'none';
-        }
+        // On both testing-mobile-on-web and real mobile, hide desktop cooldowns to avoid duplication
+        cooldownContainer.style.display = 'none';
     }
     
     // Make health and mana bars slightly smaller on mobile
@@ -472,6 +446,12 @@ function adjustUIForMobile() {
 // Initialize mobile controls when page loads
 if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
+        // Set version label if present
+        const versionEl = document.getElementById('version-label');
+        if (versionEl) {
+            versionEl.textContent = VERSION;
+        }
+        
         initMobileControls();
         adjustUIForMobile();
     });
