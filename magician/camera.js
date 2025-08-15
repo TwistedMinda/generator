@@ -147,7 +147,7 @@ function updateStaffPosition() {
     const camera = gameState.camera;
     
     // Position staff relative to camera (smaller and more in view)
-    const baseOffset = new THREE.Vector3(0.22, -0.12, -0.38);
+    const baseOffset = new THREE.Vector3(0.12, -0.08, -0.36);
     let staffOffset = baseOffset.clone();
     
     // Apply brief recoil kick when casting
