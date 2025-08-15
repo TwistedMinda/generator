@@ -1,7 +1,7 @@
 // Mobile controls for touch devices
 
 // App version (displayed in HUD)
-const VERSION = 'v1.0.2';
+const VERSION = 'v1.12';
 
 // Set this to true to test mobile controls on web browsers
 const TESTING_MOBILE_ON_WEB = true;
