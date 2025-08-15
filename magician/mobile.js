@@ -43,6 +43,8 @@ function createMovementJoystick() {
     joystickKnob.appendChild(icon);
     
     joystickContainer.appendChild(joystickKnob);
+    // Prevent click (only) from bubbling to global fire handler
+    joystickContainer.addEventListener('click', (e) => { e.stopPropagation(); }, true);
     document.body.appendChild(joystickContainer);
     
     setupJoystick(joystickContainer, joystickKnob, 'movement');
@@ -67,6 +69,8 @@ function createCameraJoystick() {
     joystickKnob.appendChild(icon);
     
     joystickContainer.appendChild(joystickKnob);
+    // Prevent click (only) from bubbling to global fire handler
+    joystickContainer.addEventListener('click', (e) => { e.stopPropagation(); }, true);
     document.body.appendChild(joystickContainer);
     
     setupJoystick(joystickContainer, joystickKnob, 'camera');

@@ -8,12 +8,12 @@ function initPlayer() {
 
 function createStaff() {
     // Staff handle
-    const handleGeometry = new THREE.CylinderGeometry(0.02, 0.03, 1.5);
+    const handleGeometry = new THREE.CylinderGeometry(0.005, 0.01, 0.4); // Ridiculously small stick
     const handleMaterial = new THREE.MeshLambertMaterial({ color: 0x4a3429 });
     const handle = new THREE.Mesh(handleGeometry, handleMaterial);
     
     // Crystal on top
-    const crystalGeometry = new THREE.OctahedronGeometry(0.08);
+    const crystalGeometry = new THREE.OctahedronGeometry(0.02);
     const crystalMaterial = new THREE.MeshPhongMaterial({ 
         color: 0xff4500,
         emissive: 0x442200,
@@ -21,7 +21,7 @@ function createStaff() {
         opacity: 0.8
     });
     const crystal = new THREE.Mesh(crystalGeometry, crystalMaterial);
-    crystal.position.y = 0.8;
+    crystal.position.y = 0.2;
     
     // Combine staff parts
     gameState.player.staff = new THREE.Group();
@@ -29,14 +29,14 @@ function createStaff() {
     gameState.player.staff.add(crystal);
     
     // Add glow effect to crystal
-    const glowGeometry = new THREE.SphereGeometry(0.15);
+    const glowGeometry = new THREE.SphereGeometry(0.04);
     const glowMaterial = new THREE.MeshBasicMaterial({ 
         color: 0xff4500,
         transparent: true,
         opacity: 0.3
     });
     const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-    glow.position.y = 0.8;
+    glow.position.y = 0.2;
     gameState.player.staff.add(glow);
     
     gameState.scene.add(gameState.player.staff);
@@ -75,6 +75,10 @@ function castFireball() {
     gameState.player.mana -= gameState.fireballCost;
     updateManaBar();
     
+    // Nudge staff for a quick recoil animation
+    if (!gameState.player.staff.userData) gameState.player.staff.userData = {};
+    gameState.player.staff.userData.kickUntil = Date.now() + 120;
+    
     // Create fireball
     const fireball = createFireball();
     gameState.spells.push(fireball);
@@ -106,6 +110,10 @@ function castLightning() {
         playSound('error');
         return;
     }
+    
+    // Nudge staff for a quick recoil animation
+    if (!gameState.player.staff.userData) gameState.player.staff.userData = {};
+    gameState.player.staff.userData.kickUntil = Date.now() + 120;
     
     // Cast successful - update cooldown and mana
     gameState.lastLightningTime = now;

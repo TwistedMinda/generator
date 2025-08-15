@@ -146,13 +146,26 @@ function updateStaffPosition() {
     const staff = gameState.player.staff;
     const camera = gameState.camera;
     
-    // Position staff relative to camera
-    const staffOffset = new THREE.Vector3(0.3, -0.2, -0.5);
+    // Position staff relative to camera (smaller and more in view)
+    const baseOffset = new THREE.Vector3(0.22, -0.12, -0.38);
+    let staffOffset = baseOffset.clone();
+    
+    // Apply brief recoil kick when casting
+    const kickActive = gameState.player.staff.userData && gameState.player.staff.userData.kickUntil && Date.now() < gameState.player.staff.userData.kickUntil;
+    if (kickActive) {
+        staffOffset.x += 0.02;
+        staffOffset.y -= 0.01;
+        staffOffset.z -= 0.03;
+    }
     staffOffset.applyMatrix4(camera.matrixWorld);
     
     staff.position.copy(staffOffset);
     staff.rotation.copy(camera.rotation);
     
+    // Clear kick flag when elapsed
+    if (gameState.player.staff.userData && gameState.player.staff.userData.kickUntil && Date.now() >= gameState.player.staff.userData.kickUntil) {
+        delete gameState.player.staff.userData.kickUntil;
+    }
     // No more swaying - keeps head stable
 }
 
