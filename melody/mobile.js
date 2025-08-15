@@ -83,6 +83,7 @@ function handleTouchEnd(event) {
     
     // Stop movement when touch ends
     gameState.mouse.isPressed = false;
+    gameState.player.isMoving = false;
 }
 
 // Add touch indicators for better UX
