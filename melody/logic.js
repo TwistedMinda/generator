@@ -6,7 +6,7 @@ function initGame() {
     gameState.scene.background = new THREE.Color(0x87CEEB); // Sky blue
     
     // Initialize renderer
-    const canvas = document.getElementById('game-canvas');
+    const canvas = document.getElementById('gameCanvas');
     gameState.renderer = new THREE.WebGLRenderer({ 
         canvas: canvas,
         antialias: true 
@@ -26,6 +26,10 @@ function initGame() {
     createMap();
     createPlayer();
     setupCameraControls();
+    
+    // Initialize mobile controls
+    initMobileControls();
+    addTouchFeedback();
     
     // Setup UI controls
     setTimeout(() => {
