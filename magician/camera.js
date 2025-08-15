@@ -52,14 +52,9 @@ function setupInputHandlers() {
         // Always cast on click
         castFireball();
         
-        // Determine if device is real mobile
-        const realMobileDetected = (typeof IS_DEVICE !== 'undefined') ? IS_DEVICE : false;
-        
         // Prevent pointer lock only if testing flag is on AND not truly mobile
-        const testingFlag = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);
-        if (testingFlag && !realMobileDetected) return;
-        
-        // Otherwise, lock pointer on desktop for better control
+        if (TESTING_MOBILE_ON_WEB && !IS_DEVICE) return;
+
         if (document.pointerLockElement !== document.body) {
             document.body.requestPointerLock();
         }
@@ -68,9 +63,6 @@ function setupInputHandlers() {
     // Space for lightning
     document.addEventListener('keydown', (event) => {
         if (event.code.toLowerCase() === 'space') {
-            // In mobile mode, space should not trigger (mobile uses buttons)
-            if (typeof isMobile !== 'undefined' && isMobile === true) return;
-            
             if (document.pointerLockElement === document.body) {
                 event.preventDefault();
                 castLightning();

@@ -16,7 +16,7 @@ function initMobileControls() {
             // Prevent browser gestures/scroll interfering
             document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
             document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-        } else if (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB) {
+        } else if (TESTING_MOBILE_ON_WEB) {
             // Testing on desktop: keep cursor visible
             document.body.style.cursor = 'auto';
             document.body.classList.remove('cursor-none');
@@ -135,7 +135,7 @@ function setupJoystick(container, knob, type) {
         }
     }
     
-    if (TESTING_MOBILE_ON_WEB) {
+    if (TESTING_MOBILE_ON_WEB && !IS_DEVICE) {
         // Use mouse events for testing on web
         container.addEventListener('mousedown', (e) => {
             e.preventDefault();
@@ -213,7 +213,7 @@ function createSpellButtons() {
     document.body.appendChild(spellContainer);
     
     // Setup spell button events (touch for mobile, click for testing on web)
-    if (TESTING_MOBILE_ON_WEB) {
+    if (TESTING_MOBILE_ON_WEB && !IS_DEVICE) {
         // Use click events for testing on web
         fireballBtn.addEventListener('mousedown', (e) => {
             e.preventDefault();
