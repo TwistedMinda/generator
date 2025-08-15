@@ -6,8 +6,8 @@ const VERSION = 'v1.14';
 // Force mobile mode on web for testing (when true, we behave as mobile even on desktop)
 const TESTING_MOBILE_ON_WEB = true;
 
-// Detect if the current device is a real mobile/touch device
-function isRealMobileDevice() {
+// Detect once if the current device is a real mobile/touch device
+const IS_DEVICE = (function () {
     try {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
             || ('ontouchstart' in window)
@@ -15,11 +15,9 @@ function isRealMobileDevice() {
     } catch (_) {
         return false;
     }
-}
+})();
 
-// Whether the game should run in mobile mode (testing flag OR real mobile device)
-function isMobileActive() {
-    return TESTING_MOBILE_ON_WEB || isRealMobileDevice();
-}
+// Whether the game should run in mobile mode (testing flag OR real device)
+const IS_MOBILE = TESTING_MOBILE_ON_WEB || IS_DEVICE;
 
 

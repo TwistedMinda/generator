@@ -1,10 +1,3 @@
-// Mobile controls for touch devices
-
-// Version and testing/mobile helpers are now defined in constants.js
-
-// Flag is automatically global when declared at top level
-
-let isMobile = false;
 let virtualJoystick = null;
 let touchControls = {
     movement: { x: 0, y: 0 },
@@ -13,18 +6,13 @@ let touchControls = {
 };
 
 function initMobileControls() {
-    // Determine mobile mode using shared helper
-    isMobile = (typeof isMobileActive === 'function') ? isMobileActive() : false;
-    
-    if (isMobile) {
-        
+    if (IS_MOBILE) {
         createMovementJoystick();
         createCameraJoystick();
         createSpellButtons();
         
         // In mobile mode (forced or detected), apply mobile behaviors
-        const realMobile = (typeof isRealMobileDevice === 'function') ? isRealMobileDevice() : false;
-        if (realMobile) {
+        if (IS_DEVICE) {
             // Prevent browser gestures/scroll interfering
             document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
             document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
@@ -365,7 +353,7 @@ function setupTouchCamera() {
 
 // Override input functions for mobile
 function updateMobileInput(deltaTime) {
-    if (!isMobile) return;
+    if (!IS_MOBILE) return;
     
     // Convert joystick input to key states and camera rotation
     const moveThreshold = 0.2; // Lower threshold for easier triggering
@@ -406,7 +394,7 @@ function updateMobileInput(deltaTime) {
 
 // Mobile-specific UI adjustments
 function adjustUIForMobile() {
-    if (!isMobile) return;
+    if (!IS_MOBILE) return;
     
     // Handle desktop cooldown icons vs mobile spell buttons
     const cooldownContainer = document.getElementById('desktop-spell-cooldowns');
@@ -443,4 +431,3 @@ if (typeof window !== 'undefined') {
 
 // Export for use in other files
 window.updateMobileInput = updateMobileInput;
-window.isMobile = () => isMobile;
