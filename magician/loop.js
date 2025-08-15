@@ -19,6 +19,7 @@ function gameLoop(currentTime) {
         updatePlayer(clampedDelta);
         updateFaeries(clampedDelta);
         updateParticleSystem(clampedDelta);
+        updateHealthGems(clampedDelta);
         updateGameLogic(clampedDelta);
         updateSpellCooldowns();
         

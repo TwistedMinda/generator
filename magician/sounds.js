@@ -54,89 +54,115 @@ function playSound(type, options = {}) {
         case 'ambient':
             playAmbientSound(options);
             break;
+        case 'gemSpawn':
+            playGemSpawnSound(options);
+            break;
+        case 'gemPickup':
+            playGemPickupSound(options);
+            break;
     }
 }
 
 function playFireballSound() {
-    const duration = 0.4;
+    const duration = 0.5;
     const now = audioContext.currentTime;
     
-    // Main fire sound - noise with filtering
+    // Warm fire base - gentle filtered noise
     const noiseBuffer = createNoiseBuffer(duration);
     const noiseSource = audioContext.createBufferSource();
     noiseSource.buffer = noiseBuffer;
     
     const filter = audioContext.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(800, now);
-    filter.frequency.exponentialRampToValueAtTime(200, now + duration);
-    filter.Q.setValueAtTime(2, now);
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(600, now);
+    filter.frequency.exponentialRampToValueAtTime(300, now + duration);
+    filter.Q.setValueAtTime(1, now);
     
-    const gain = audioContext.createGain();
-    gain.gain.setValueAtTime(0.4, now);
-    gain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    const noiseGain = audioContext.createGain();
+    noiseGain.gain.setValueAtTime(0, now);
+    noiseGain.gain.linearRampToValueAtTime(0.15, now + 0.05);
+    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
     
     noiseSource.connect(filter);
-    filter.connect(gain);
-    gain.connect(masterGain);
+    filter.connect(noiseGain);
+    noiseGain.connect(masterGain);
     
     noiseSource.start(now);
     noiseSource.stop(now + duration);
     
-    // Add whoosh effect
-    const oscWhoosh = audioContext.createOscillator();
-    oscWhoosh.type = 'sawtooth';
-    oscWhoosh.frequency.setValueAtTime(150, now);
-    oscWhoosh.frequency.exponentialRampToValueAtTime(80, now + duration);
+    // Magical whoosh - warm sine wave
+    const whoosh = audioContext.createOscillator();
+    whoosh.type = 'sine';
+    whoosh.frequency.setValueAtTime(220, now);
+    whoosh.frequency.exponentialRampToValueAtTime(110, now + duration);
     
     const whooshGain = audioContext.createGain();
-    whooshGain.gain.setValueAtTime(0.2, now);
+    whooshGain.gain.setValueAtTime(0, now);
+    whooshGain.gain.linearRampToValueAtTime(0.12, now + 0.1);
     whooshGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
     
-    oscWhoosh.connect(whooshGain);
+    whoosh.connect(whooshGain);
     whooshGain.connect(masterGain);
     
-    oscWhoosh.start(now);
-    oscWhoosh.stop(now + duration);
+    whoosh.start(now);
+    whoosh.stop(now + duration);
+    
+    // Fire crackle harmonic
+    const crackle = audioContext.createOscillator();
+    crackle.type = 'triangle';
+    crackle.frequency.setValueAtTime(880, now);
+    crackle.frequency.exponentialRampToValueAtTime(440, now + duration);
+    
+    const crackleGain = audioContext.createGain();
+    crackleGain.gain.setValueAtTime(0, now + 0.02);
+    crackleGain.gain.linearRampToValueAtTime(0.06, now + 0.08);
+    crackleGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    
+    crackle.connect(crackleGain);
+    crackleGain.connect(masterGain);
+    
+    crackle.start(now + 0.02);
+    crackle.stop(now + duration);
 }
 
 function playLightningSound() {
-    const duration = 0.3;
+    const duration = 0.5;
     const now = audioContext.currentTime;
     
-    // Sharp crack sound
-    const crackBuffer = createNoiseBuffer(0.1);
-    const crackSource = audioContext.createBufferSource();
-    crackSource.buffer = crackBuffer;
+    // Gentle electric pulse - very soft (the part you liked!)
+    const pulse = audioContext.createOscillator();
+    pulse.type = 'sine';
+    pulse.frequency.setValueAtTime(110, now);
+    pulse.frequency.linearRampToValueAtTime(80, now + duration);
     
-    const crackFilter = audioContext.createBiquadFilter();
-    crackFilter.type = 'highpass';
-    crackFilter.frequency.setValueAtTime(2000, now);
+    const pulseGain = audioContext.createGain();
+    pulseGain.gain.setValueAtTime(0, now);
+    pulseGain.gain.linearRampToValueAtTime(0.08, now + 0.15);
+    pulseGain.gain.linearRampToValueAtTime(0.05, now + duration * 0.8);
+    pulseGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
     
-    const crackGain = audioContext.createGain();
-    crackGain.gain.setValueAtTime(0.6, now);
-    crackGain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+    pulse.connect(pulseGain);
+    pulseGain.connect(masterGain);
     
-    crackSource.connect(crackFilter);
-    crackFilter.connect(crackGain);
-    crackGain.connect(masterGain);
+    pulse.start(now);
+    pulse.stop(now + duration);
     
-    crackSource.start(now);
+    // Soft harmonic layer
+    const harmonic = audioContext.createOscillator();
+    harmonic.type = 'sine';
+    harmonic.frequency.setValueAtTime(220, now + 0.1);
+    harmonic.frequency.linearRampToValueAtTime(165, now + duration);
     
-    // Electric buzz
-    const buzz = audioContext.createOscillator();
-    buzz.type = 'square';
-    buzz.frequency.setValueAtTime(100 + Math.random() * 200, now);
+    const harmonicGain = audioContext.createGain();
+    harmonicGain.gain.setValueAtTime(0, now + 0.1);
+    harmonicGain.gain.linearRampToValueAtTime(0.04, now + 0.2);
+    harmonicGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
     
-    const buzzGain = audioContext.createGain();
-    buzzGain.gain.setValueAtTime(0.3, now + 0.05);
-    buzzGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    harmonic.connect(harmonicGain);
+    harmonicGain.connect(masterGain);
     
-    buzz.connect(buzzGain);
-    buzzGain.connect(masterGain);
-    
-    buzz.start(now + 0.05);
-    buzz.stop(now + duration);
+    harmonic.start(now + 0.1);
+    harmonic.stop(now + duration);
 }
 
 function playHitSound() {
@@ -180,6 +206,65 @@ function playHitSound() {
     impact.stop(now + duration);
     noise.start(now);
     noise.stop(now + duration * 0.5);
+}
+
+function playGemSpawnSound() {
+    const duration = 0.8;
+    const now = audioContext.currentTime;
+    
+    // Gentle magical chime
+    const chime = audioContext.createOscillator();
+    chime.type = 'sine';
+    chime.frequency.setValueAtTime(523, now); // C5
+    chime.frequency.linearRampToValueAtTime(659, now + duration * 0.3); // E5
+    chime.frequency.linearRampToValueAtTime(523, now + duration); // Back to C5
+    
+    const chimeGain = audioContext.createGain();
+    chimeGain.gain.setValueAtTime(0, now);
+    chimeGain.gain.linearRampToValueAtTime(0.08, now + 0.1);
+    chimeGain.gain.linearRampToValueAtTime(0.05, now + duration * 0.6);
+    chimeGain.gain.linearRampToValueAtTime(0, now + duration);
+    
+    chime.connect(chimeGain);
+    chimeGain.connect(masterGain);
+    
+    chime.start(now);
+    chime.stop(now + duration);
+}
+
+function playGemPickupSound() {
+    const duration = 0.4;
+    const now = audioContext.currentTime;
+    
+    // Healing sparkle sound - ascending
+    const heal = audioContext.createOscillator();
+    heal.type = 'sine';
+    heal.frequency.setValueAtTime(400, now);
+    heal.frequency.exponentialRampToValueAtTime(800, now + duration);
+    
+    const healGain = audioContext.createGain();
+    healGain.gain.setValueAtTime(0.12, now);
+    healGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    
+    // Add harmonics for magical feeling
+    const harmonic = audioContext.createOscillator();
+    harmonic.type = 'triangle';
+    harmonic.frequency.setValueAtTime(800, now);
+    harmonic.frequency.exponentialRampToValueAtTime(1200, now + duration);
+    
+    const harmonicGain = audioContext.createGain();
+    harmonicGain.gain.setValueAtTime(0.06, now);
+    harmonicGain.gain.exponentialRampToValueAtTime(0.01, now + duration);
+    
+    heal.connect(healGain);
+    healGain.connect(masterGain);
+    harmonic.connect(harmonicGain);
+    harmonicGain.connect(masterGain);
+    
+    heal.start(now);
+    heal.stop(now + duration);
+    harmonic.start(now);
+    harmonic.stop(now + duration);
 }
 
 function playFaerieAttackSound() {

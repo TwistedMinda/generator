@@ -22,6 +22,7 @@ window.gameState = {
     spells: [],
     particleSystems: [],
     buildings: [], // Will store building meshes for collision detection
+    healthGems: [], // Health pickup gems
     
     // Input
     keys: {},
@@ -32,6 +33,7 @@ window.gameState = {
     gameStarted: false,
     time: 0,
     spawnTimer: 0,
+    healthGemSpawnTimer: 0,
     difficulty: 1,
     
     // Settings
@@ -41,6 +43,8 @@ window.gameState = {
     lightningCost: 20,
     fireballCooldown: 400, // 0.4 seconds for fireball
     lightningCooldown: 3000, // 3 seconds for lightning
+    maxHealthGems: 2,
+    healthGemSpawnRate: 10000, // 10 seconds base
     
     // Spell cooldowns
     lastFireballTime: 0,

@@ -37,6 +37,15 @@ function updateGameLogic(deltaTime) {
         }
     }
     
+    // Spawn health gems
+    gameState.healthGemSpawnTimer += deltaTime * 1000;
+    if (gameState.healthGemSpawnTimer >= gameState.healthGemSpawnRate) {
+        spawnHealthGem();
+        // Reset with new random interval: 10 seconds + 3-10 seconds random
+        gameState.healthGemSpawnTimer = 0;
+        gameState.healthGemSpawnRate = 10000 + (3000 + Math.random() * 7000);
+    }
+    
     // Check win condition (survival-based game)
     updateDifficulty();
     
@@ -122,6 +131,7 @@ function resetGameState() {
     gameState.faeries = [];
     gameState.spells = [];
     gameState.particleSystems = [];
+    gameState.healthGems = [];
     
     // Reset player state
     gameState.player.health = gameState.player.maxHealth;
@@ -133,6 +143,7 @@ function resetGameState() {
     gameState.score = 0;
     gameState.time = 0;
     gameState.spawnTimer = 0;
+    gameState.healthGemSpawnTimer = 0;
     gameState.difficulty = 1;
     gameState.spawnRate = 1200; // Start with moderate spawning
     gameState.maxFaeries = 8; // Start with fewer faeries
