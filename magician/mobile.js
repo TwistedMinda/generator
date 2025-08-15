@@ -416,12 +416,6 @@ function updateMobileInput(deltaTime) {
 function adjustUIForMobile() {
     if (!isMobile) return;
     
-    // Hide desktop-only crosshair
-    const crosshair = document.querySelector('.absolute.top-1\\/2.left-1\\/2');
-    if (crosshair) {
-        crosshair.style.display = 'none';
-    }
-    
     // Handle desktop cooldown icons vs mobile spell buttons
     const cooldownContainer = document.getElementById('desktop-spell-cooldowns');
     if (cooldownContainer) {
