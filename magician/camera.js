@@ -53,9 +53,7 @@ function setupInputHandlers() {
         castFireball();
         
         // Determine if device is real mobile
-        const realMobileDetected = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
-            || ('ontouchstart' in window)
-            || (navigator.maxTouchPoints > 0);
+        const realMobileDetected = (typeof isRealMobileDevice === 'function') ? isRealMobileDevice() : false;
         
         // Prevent pointer lock only if testing flag is on AND not truly mobile
         const testingFlag = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);

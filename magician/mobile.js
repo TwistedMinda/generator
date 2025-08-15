@@ -1,10 +1,6 @@
 // Mobile controls for touch devices
 
-// App version (displayed in HUD)
-const VERSION = 'v1.15';
-
-// Set this to true to force mobile mode on web for testing
-const TESTING_MOBILE_ON_WEB = true;
+// Version and testing/mobile helpers are now defined in constants.js
 
 // Flag is automatically global when declared at top level
 
@@ -17,13 +13,8 @@ let touchControls = {
 };
 
 function initMobileControls() {
-    // Determine mobile mode
-    // If TESTING_MOBILE_ON_WEB is true, we force mobile mode. Otherwise, detect real mobile
-    isMobile = TESTING_MOBILE_ON_WEB || (
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-        ('ontouchstart' in window) ||
-        (navigator.maxTouchPoints > 0)
-    );
+    // Determine mobile mode using shared helper
+    isMobile = (typeof isMobileActive === 'function') ? isMobileActive() : false;
     
     if (isMobile) {
         
@@ -32,14 +23,15 @@ function initMobileControls() {
         createSpellButtons();
         
         // In mobile mode (forced or detected), apply mobile behaviors
-        if (TESTING_MOBILE_ON_WEB) {
-            // Keep cursor visible while testing on web
-            document.body.style.cursor = 'auto';
-            document.body.classList.remove('cursor-none');
-        } else {
-            document.body.style.cursor = 'none';
+        const realMobile = (typeof isRealMobileDevice === 'function') ? isRealMobileDevice() : false;
+        if (realMobile) {
+            // Prevent browser gestures/scroll interfering
             document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
             document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+        } else if (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB) {
+            // Testing on desktop: keep cursor visible
+            document.body.style.cursor = 'auto';
+            document.body.classList.remove('cursor-none');
         }
     }
 }
