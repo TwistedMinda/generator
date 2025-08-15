@@ -52,8 +52,15 @@ function setupInputHandlers() {
         // Always cast on click
         castFireball();
         
-        // When testing mobile on web, do not lock cursor
-        if (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB) return;
+        // Determine if device is real mobile
+        const realMobileDetected = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+            || ('ontouchstart' in window)
+            || (navigator.maxTouchPoints > 0);
+        
+        // Prevent pointer lock only if testing flag is on AND not truly mobile
+        const testingFlag = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);
+        if (testingFlag && !realMobileDetected) return;
+        
         // Otherwise, lock pointer on desktop for better control
         if (document.pointerLockElement !== document.body) {
             document.body.requestPointerLock();
