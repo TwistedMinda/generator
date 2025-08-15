@@ -150,30 +150,43 @@ function setupJoystick(container, knob, type) {
             handleEnd();
         });
     } else {
-        // Use touch events for real mobile
+        // Multi-touch: bind one touch exclusively to this joystick until it ends/cancels
+        let activeTouchId = null;
+        
         container.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            const touch = e.touches[0];
-            handleStart(touch.clientX, touch.clientY);
-        });
+            if (activeTouchId === null && e.changedTouches.length > 0) {
+                const t = e.changedTouches[0];
+                activeTouchId = t.identifier;
+                handleStart(t.clientX, t.clientY);
+            }
+        }, { passive: false });
         
         document.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            const touch = e.touches[0];
-            handleMove(touch.clientX, touch.clientY);
-        });
+            if (activeTouchId === null) return;
+            for (let i = 0; i < e.touches.length; i++) {
+                const t = e.touches[i];
+                if (t.identifier === activeTouchId) {
+                    e.preventDefault();
+                    handleMove(t.clientX, t.clientY);
+                    break;
+                }
+            }
+        }, { passive: false });
         
-        document.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            handleEnd();
-        });
-        
-        // Also handle touchcancel for mobile
-        document.addEventListener('touchcancel', (e) => {
-            if (!isDragging) return;
-            handleEnd();
-        });
+        const endLike = (e) => {
+            if (activeTouchId === null) return;
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                const t = e.changedTouches[i];
+                if (t.identifier === activeTouchId) {
+                    handleEnd();
+                    activeTouchId = null;
+                    break;
+                }
+            }
+        };
+        document.addEventListener('touchend', endLike, { passive: false });
+        document.addEventListener('touchcancel', endLike, { passive: false });
     }
 }
 
