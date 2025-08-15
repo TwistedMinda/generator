@@ -92,11 +92,11 @@ function updateHealthGems(deltaTime) {
             gem.children[3].intensity = glowIntensity;
         }
         
-        // Check pickup collision with player
+        // Check pickup collision with player - bigger radius for easier collection
         const distance = gem.position.distanceTo(gameState.camera.position);
-        if (distance < 1.2) {
+        if (distance < 2.0) {
             // Heal player
-            const healAmount = userData.healAmount;
+            const healAmount = Math.round(userData.healAmount);
             gameState.player.health = Math.min(gameState.player.maxHealth, gameState.player.health + healAmount);
             
             // Show heal number

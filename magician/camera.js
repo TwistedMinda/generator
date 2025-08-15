@@ -48,19 +48,51 @@ function setupInputHandlers() {
     });
     
     // Mouse click for spells
-    document.addEventListener('click', () => {
+    document.addEventListener('click', (event) => {
+        // Check if mobile controls are active
+        const isTestingMobile = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);
+        const isMobileActive = (typeof isMobile !== 'undefined' && (isMobile || isTestingMobile));
+        
+        if (isMobileActive) {
+            // On mobile, only allow fireball in upper portion of screen (above UI elements)
+            const screenHeight = window.innerHeight;
+            const uiZoneHeight = screenHeight * 0.4; // Bottom 40% is UI zone
+            const clickY = event.clientY;
+            
+            if (clickY > uiZoneHeight) {
+                // Click is in UI zone, don't fire
+                return;
+            }
+        }
+        
+        // Fire fireball for valid clicks
+        castFireball();
+        
+        if (isTestingMobile) {
+            // When testing mobile on web, don't request pointer lock
+            return;
+        }
+        
+        // Request pointer lock for normal web play (optional for better mouse control)
         if (document.pointerLockElement !== document.body) {
             document.body.requestPointerLock();
-        } else {
-            castFireball();
         }
     });
     
     // Space for lightning
     document.addEventListener('keydown', (event) => {
-        if (event.code.toLowerCase() === 'space' && document.pointerLockElement === document.body) {
-            event.preventDefault();
-            castLightning();
+        const isTestingMobile = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);
+        
+        if (event.code.toLowerCase() === 'space') {
+            if (isTestingMobile) {
+                // When testing mobile on web, don't handle space - only mobile UI buttons should work
+                return;
+            }
+            
+            if (document.pointerLockElement === document.body) {
+                event.preventDefault();
+                castLightning();
+            }
         }
     });
     

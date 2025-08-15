@@ -15,6 +15,7 @@ function gameLoop(currentTime) {
         gameState.time += clampedDelta;
         
         // Update all game systems
+        updateMobileInput(clampedDelta);
         updateCamera(clampedDelta);
         updatePlayer(clampedDelta);
         updateFaeries(clampedDelta);
