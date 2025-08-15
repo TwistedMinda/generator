@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>IMPRO - Neon Flow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="constants.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            pink: '#ff4bd8',
+                            cyan: '#00eaff',
+                            lime: '#7cff00',
+                            dark: '#0a0a0f'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass { backdrop-filter: blur(8px); background: rgba(255,255,255,0.06); }
+    </style>
+    </head>
+<body class="bg-neon-dark overflow-hidden">
+    <!-- HUD -->
+    <div id="hud" class="fixed inset-0 pointer-events-none z-10">
+        <!-- Flow Bar (Health) -->
+        <div class="absolute top-4 left-4">
+            <div class="w-64 h-6 bg-black/50 rounded-full border border-white/20 backdrop-blur-md">
+                <div id="health-bar" class="h-full bg-gradient-to-r from-emerald-400 to-lime-300 rounded-full transition-all duration-500" style="width: 100%"></div>
+            </div>
+            <div class="text-white/70 text-xs mt-1 font-semibold tracking-wider">FLOW</div>
+        </div>
+
+        <!-- Score -->
+        <div class="absolute top-4 right-4">
+            <div class="glass rounded-lg px-4 py-2 border border-cyan-300/30 shadow-lg">
+                <span class="text-cyan-300 text-lg font-bold tracking-wide">Score: </span>
+                <span id="score" class="text-white font-black text-lg tracking-wide">0</span>
+            </div>
+        </div>
+
+        <!-- Crosshair -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div class="w-8 h-8 border border-cyan-400/70 rounded-full animate-pulse relative">
+                <div class="absolute inset-1 border border-pink-400/50 rounded-full"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="game-container" class="w-full h-screen"></div>
+
+    <!-- Scripts -->
+    <script src="state.js"></script>
+    <script src="sounds.js"></script>
+    <script src="ui.js"></script>
+    <script src="map.js"></script>
+    <script src="camera.js"></script>
+    <script src="player.js"></script>
+    <script src="orb.js"></script>
+    <script src="particle-effects.js"></script>
+    <script src="loop.js"></script>
+    <script src="logic.js"></script>
+
+    <script>
+        window.addEventListener('load', () => { initGame(); });
+    </script>
+</body>
+</html>
+
+
