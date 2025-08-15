@@ -1,11 +1,11 @@
-Keywords: simplicity, reusability, clean, fast
-Goal: prototype games very fast
+Goal: Fast game prototyping
 
 # Rules
 - no JS classes, simple functions only
 - Tailwind only, no basic CSS
+- Use threeJS and make 3D game if not asked (even if user asks 2D game use threeJS for particles etc)
+- For UI use HTML only, never canvas
 - Never modify CSS from JS manually, only update classes
-- maximum reusability, minimum files
 - no "Start Screen" just directly the game
 - its a prototype, it must be really cool and shiny not basic and sad
 
@@ -20,11 +20,12 @@ Goal: prototype games very fast
 - [game]/loop.js: base-loop, the boilerplate not related to the game preventing pollution of the strategical point logic.js
 - [game]/logic.js: base game flow
 - [game]/particle-effects.js: all effects, really focus on this part because thats where all the magic happens for a prototype
-- [game]/sounds.js: using oscialltor only for ambient and basic actions
+- [game]/sounds.js: using oscialltor only -- minimum ambient melody and basic actions soundeffects, but smooth, never too realistic
 
 # Game Specs
 
-[game] plane
+[game] magician
 [specs]
-Flying in a devastated city, apocalypse, dark ambiance
-cool effects, realistic flying enemies
+Devastated city, dark forest ambiance
+I'm a magician with a stick that can throw fireballs to fearies coming at me
+My spells are so strong they are lights themselves that print shadows
