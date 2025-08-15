@@ -1,7 +1,7 @@
 // Mobile controls for touch devices
 
 // Set this to true to test mobile controls on web browsers
-const TESTING_MOBILE_ON_WEB = false;
+const TESTING_MOBILE_ON_WEB = true;
 
 // Flag is automatically global when declared at top level
 
@@ -186,6 +186,13 @@ function setupJoystick(container, knob, type) {
         });
         
         document.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            handleEnd();
+        });
+        
+        // Also handle touchcancel for mobile
+        document.addEventListener('touchcancel', (e) => {
+            if (!isDragging) return;
             handleEnd();
         });
     }
@@ -197,19 +204,30 @@ function createSpellButtons() {
     spellContainer.className = 'fixed bottom-32 right-4 flex flex-col space-y-3';
     spellContainer.style.zIndex = '2000'; // Higher z-index to ensure it's on top
     
-    // Fireball button
+    // Fireball button with cooldown system (same as desktop but larger)
     const fireballBtn = document.createElement('div');
-    fireballBtn.id = 'mobile-fireball';
-    fireballBtn.className = 'w-16 h-16 bg-black bg-opacity-40 rounded-full border-2 border-orange-400 border-opacity-50 flex items-center justify-center shadow-lg backdrop-blur-sm';
-    fireballBtn.style.pointerEvents = 'auto'; // Ensure touch events work
-    fireballBtn.innerHTML = '<div class="text-2xl pointer-events-none">🔥</div>';
+    fireballBtn.className = 'relative';
+    fireballBtn.innerHTML = `
+        <div class="w-16 h-16 bg-black bg-opacity-40 rounded-full backdrop-blur-sm border-2 border-orange-400 border-opacity-50 flex items-center justify-center shadow-lg">
+            <div class="text-2xl">🔥</div>
+        </div>
+        <div id="mobile-fireball-cooldown" class="absolute inset-0 rounded-full border-4 border-orange-500 opacity-0 transition-opacity duration-200">
+            <div id="mobile-fireball-progress" class="absolute inset-0 rounded-full" style="background: conic-gradient(transparent 0deg, orange 0deg);"></div>
+        </div>
+    `;
+    fireballBtn.style.pointerEvents = 'auto';
     
-    // Lightning button
+    // Lightning button with cooldown system (same as desktop but larger)
     const lightningBtn = document.createElement('div');
-    lightningBtn.id = 'mobile-lightning';
-    lightningBtn.className = 'w-16 h-16 bg-black bg-opacity-40 rounded-full border-2 border-blue-400 border-opacity-50 flex items-center justify-center shadow-lg backdrop-blur-sm';
-    lightningBtn.style.pointerEvents = 'auto'; // Ensure touch events work
-    lightningBtn.innerHTML = '<div class="text-2xl pointer-events-none">⚡</div>';
+    lightningBtn.className = 'relative';
+    lightningBtn.innerHTML = `
+        <div class="w-16 h-16 bg-black bg-opacity-40 rounded-full backdrop-blur-sm border-2 border-blue-400 border-opacity-50 flex items-center justify-center shadow-lg">
+            <div class="text-2xl">⚡</div>
+        </div>
+        <div id="mobile-lightning-cooldown" class="absolute inset-0 rounded-full border-4 border-blue-500 opacity-0 transition-opacity duration-200">
+            <div id="mobile-lightning-progress" class="absolute inset-0 rounded-full" style="background: conic-gradient(transparent 0deg, cyan 0deg);"></div>
+        </div>
+    `;
     
     spellContainer.appendChild(fireballBtn);
     spellContainer.appendChild(lightningBtn);
@@ -260,6 +278,11 @@ function createSpellButtons() {
             fireballBtn.style.transform = 'scale(1)';
         });
         
+        fireballBtn.addEventListener('touchcancel', (e) => {
+            e.preventDefault();
+            fireballBtn.style.transform = 'scale(1)';
+        });
+        
         lightningBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             lightningBtn.style.transform = 'scale(0.9)';
@@ -267,6 +290,11 @@ function createSpellButtons() {
         });
         
         lightningBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            lightningBtn.style.transform = 'scale(1)';
+        });
+        
+        lightningBtn.addEventListener('touchcancel', (e) => {
             e.preventDefault();
             lightningBtn.style.transform = 'scale(1)';
         });
@@ -417,23 +445,15 @@ function adjustUIForMobile() {
         }
     }
     
-    // Hide desktop cooldown icons when testing mobile on web to avoid duplication
+    // Handle desktop cooldown icons vs mobile spell buttons
     const cooldownContainer = document.querySelector('.absolute.bottom-4.left-4.flex.space-x-3');
     if (cooldownContainer) {
         if (TESTING_MOBILE_ON_WEB) {
-            // Hide entire desktop cooldown container when testing mobile on web
+            // When testing mobile on web, hide desktop cooldowns to avoid duplication
             cooldownContainer.style.display = 'none';
         } else {
-            // On real mobile, move above joystick
-            cooldownContainer.style.bottom = '7rem';
-            
-            // Hide desktop control labels (CLICK, SPACE) on real mobile
-            const labels = cooldownContainer.querySelectorAll('div[class*="absolute"][class*="-bottom-1"]');
-            labels.forEach(label => {
-                if (label.textContent === 'CLICK' || label.textContent === 'SPACE') {
-                    label.style.display = 'none';
-                }
-            });
+            // On real mobile devices, completely hide desktop cooldowns since we have mobile buttons
+            cooldownContainer.style.display = 'none';
         }
     }
     

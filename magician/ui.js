@@ -124,12 +124,28 @@ function updateSpellCooldowns() {
     const fireballElement = document.getElementById('fireball-cooldown');
     const fireballProgressElement = document.getElementById('fireball-progress');
     
-    if (fireballTimeLeft > 0) {
-        fireballElement.style.opacity = '0.3';
-        const degrees = fireballProgress * 360;
-        fireballProgressElement.style.background = `conic-gradient(orange ${degrees}deg, transparent ${degrees}deg)`;
-    } else {
-        fireballElement.style.opacity = '0';
+    if (fireballElement && fireballProgressElement) {
+        if (fireballTimeLeft > 0) {
+            fireballElement.style.opacity = '0.3';
+            const degrees = fireballProgress * 360;
+            fireballProgressElement.style.background = `conic-gradient(orange ${degrees}deg, transparent ${degrees}deg)`;
+        } else {
+            fireballElement.style.opacity = '0';
+        }
+    }
+    
+    // Update mobile fireball cooldown with same animation
+    const mobileFireballElement = document.getElementById('mobile-fireball-cooldown');
+    const mobileFireballProgressElement = document.getElementById('mobile-fireball-progress');
+    
+    if (mobileFireballElement && mobileFireballProgressElement) {
+        if (fireballTimeLeft > 0) {
+            mobileFireballElement.style.opacity = '0.3';
+            const degrees = fireballProgress * 360;
+            mobileFireballProgressElement.style.background = `conic-gradient(orange ${degrees}deg, transparent ${degrees}deg)`;
+        } else {
+            mobileFireballElement.style.opacity = '0';
+        }
     }
     
     // Update lightning cooldown
@@ -138,12 +154,28 @@ function updateSpellCooldowns() {
     const lightningElement = document.getElementById('lightning-cooldown');
     const lightningProgressElement = document.getElementById('lightning-progress');
     
-    if (lightningTimeLeft > 0) {
-        lightningElement.style.opacity = '0.3';
-        const degrees = lightningProgress * 360;
-        lightningProgressElement.style.background = `conic-gradient(cyan ${degrees}deg, transparent ${degrees}deg)`;
-    } else {
-        lightningElement.style.opacity = '0';
+    if (lightningElement && lightningProgressElement) {
+        if (lightningTimeLeft > 0) {
+            lightningElement.style.opacity = '0.3';
+            const degrees = lightningProgress * 360;
+            lightningProgressElement.style.background = `conic-gradient(cyan ${degrees}deg, transparent ${degrees}deg)`;
+        } else {
+            lightningElement.style.opacity = '0';
+        }
+    }
+    
+    // Update mobile lightning cooldown with same animation  
+    const mobileLightningElement = document.getElementById('mobile-lightning-cooldown');
+    const mobileLightningProgressElement = document.getElementById('mobile-lightning-progress');
+    
+    if (mobileLightningElement && mobileLightningProgressElement) {
+        if (lightningTimeLeft > 0) {
+            mobileLightningElement.style.opacity = '0.3';
+            const degrees = lightningProgress * 360;
+            mobileLightningProgressElement.style.background = `conic-gradient(cyan ${degrees}deg, transparent ${degrees}deg)`;
+        } else {
+            mobileLightningElement.style.opacity = '0';
+        }
     }
 }
 
