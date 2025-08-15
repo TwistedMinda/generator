@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plane - Apocalypse Flight</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'apocalypse': {
+                            'dark': '#1a1a1a',
+                            'fire': '#ff4500',
+                            'smoke': '#2d2d2d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-apocalypse-dark overflow-hidden m-0 p-0 h-screen">
+    <canvas id="gameCanvas" class="block w-full h-full cursor-none"></canvas>
+    
+    <!-- HUD Elements -->
+    <div id="hud" class="absolute top-0 left-0 w-full h-full pointer-events-none z-10">
+        <!-- Health Bar -->
+        <div class="absolute top-4 left-4 bg-red-900 bg-opacity-50 p-2 rounded border border-red-600">
+            <div class="text-red-400 text-sm mb-1">HULL INTEGRITY</div>
+            <div class="w-32 h-2 bg-red-900 rounded overflow-hidden">
+                <div id="healthBar" class="h-full bg-red-500 transition-all duration-200" style="width: 100%"></div>
+            </div>
+        </div>
+        
+        <!-- Altitude Meter -->
+        <div class="absolute top-4 right-4 bg-blue-900 bg-opacity-50 p-2 rounded border border-blue-600">
+            <div class="text-blue-400 text-sm mb-1">ALTITUDE</div>
+            <div id="altitude" class="text-blue-300 text-lg font-mono">1000m</div>
+        </div>
+        
+        <!-- Speed Indicator -->
+        <div class="absolute bottom-4 left-4 bg-green-900 bg-opacity-50 p-2 rounded border border-green-600">
+            <div class="text-green-400 text-sm mb-1">SPEED</div>
+            <div id="speed" class="text-green-300 text-lg font-mono">250 km/h</div>
+        </div>
+        
+        <!-- Crosshair -->
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div class="w-6 h-6 border-2 border-white border-opacity-60 rounded-full bg-transparent">
+                <div class="absolute top-1/2 left-1/2 w-1 h-1 bg-white rounded-full transform -translate-x-1/2 -translate-y-1/2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="state.js"></script>
+    <script src="ui.js"></script>
+    <script src="map.js"></script>
+    <script src="camera.js"></script>
+    <script src="player.js"></script>
+    <script src="enemy.js"></script>
+    <script src="particle-effects.js"></script>
+    <script src="sounds.js"></script>
+    <script src="loop.js"></script>
+    <script src="logic.js"></script>
+</body>
+</html>
