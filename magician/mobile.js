@@ -1,9 +1,9 @@
 // Mobile controls for touch devices
 
 // App version (displayed in HUD)
-const VERSION = 'v1.12';
+const VERSION = 'v1.14';
 
-// Set this to true to test mobile controls on web browsers
+// Set this to true to force mobile mode on web for testing
 const TESTING_MOBILE_ON_WEB = true;
 
 // Flag is automatically global when declared at top level
@@ -17,11 +17,13 @@ let touchControls = {
 };
 
 function initMobileControls() {
-    // Detect mobile device or force mobile mode for testing
-    isMobile = TESTING_MOBILE_ON_WEB || 
-               /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-               ('ontouchstart' in window) || 
-               (navigator.maxTouchPoints > 0);
+    // Determine mobile mode
+    // If TESTING_MOBILE_ON_WEB is true, we force mobile mode. Otherwise, detect real mobile
+    isMobile = TESTING_MOBILE_ON_WEB || (
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+        ('ontouchstart' in window) ||
+        (navigator.maxTouchPoints > 0)
+    );
     
     if (isMobile) {
         
@@ -29,17 +31,15 @@ function initMobileControls() {
         createCameraJoystick();
         createSpellButtons();
         
-        // Hide cursor only on real mobile devices, not when testing on web
-        if (!TESTING_MOBILE_ON_WEB) {
-            document.body.style.cursor = 'none';
-            
-            // Prevent default touch behaviors only on real mobile
-            document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
-            document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
-        } else {
-            // When testing mobile on web, ensure cursor is visible
+        // In mobile mode (forced or detected), apply mobile behaviors
+        if (TESTING_MOBILE_ON_WEB) {
+            // Keep cursor visible while testing on web
             document.body.style.cursor = 'auto';
             document.body.classList.remove('cursor-none');
+        } else {
+            document.body.style.cursor = 'none';
+            document.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+            document.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
         }
     }
 }
@@ -416,12 +416,10 @@ function updateMobileInput(deltaTime) {
 function adjustUIForMobile() {
     if (!isMobile) return;
     
-    // Hide desktop-only crosshair only on real mobile, keep it when testing on web
-    if (!TESTING_MOBILE_ON_WEB) {
-        const crosshair = document.querySelector('.absolute.top-1\\/2.left-1\\/2');
-        if (crosshair) {
-            crosshair.style.display = 'none';
-        }
+    // Hide desktop-only crosshair
+    const crosshair = document.querySelector('.absolute.top-1\\/2.left-1\\/2');
+    if (crosshair) {
+        crosshair.style.display = 'none';
     }
     
     // Handle desktop cooldown icons vs mobile spell buttons

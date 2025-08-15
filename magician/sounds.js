@@ -11,10 +11,7 @@ function initAudio() {
         masterGain = audioContext.createGain();
         masterGain.gain.setValueAtTime(0.3, audioContext.currentTime);
         masterGain.connect(audioContext.destination);
-        
-        console.log('Audio system initialized');
     } catch (error) {
-        console.warn('Audio not available:', error);
     }
 }
 

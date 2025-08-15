@@ -49,10 +49,12 @@ function setupInputHandlers() {
     
     // Mouse click for spells
     document.addEventListener('click', (event) => {
-        // Fire fireball for valid clicks
+        // Always cast on click
         castFireball();
         
-        // Request pointer lock for normal web play (optional for better mouse control)
+        // When testing mobile on web, do not lock cursor
+        if (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB) return;
+        // Otherwise, lock pointer on desktop for better control
         if (document.pointerLockElement !== document.body) {
             document.body.requestPointerLock();
         }
@@ -60,13 +62,9 @@ function setupInputHandlers() {
     
     // Space for lightning
     document.addEventListener('keydown', (event) => {
-        const isTestingMobile = (typeof TESTING_MOBILE_ON_WEB !== 'undefined' && TESTING_MOBILE_ON_WEB);
-        
         if (event.code.toLowerCase() === 'space') {
-            if (isTestingMobile) {
-                // When testing mobile on web, don't handle space - only mobile UI buttons should work
-                return;
-            }
+            // In mobile mode, space should not trigger (mobile uses buttons)
+            if (typeof isMobile !== 'undefined' && isMobile === true) return;
             
             if (document.pointerLockElement === document.body) {
                 event.preventDefault();
