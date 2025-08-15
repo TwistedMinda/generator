@@ -6,8 +6,10 @@ Goal: Fast game prototyping
 - Use threeJS and make 3D game if not asked (even if user asks 2D game use threeJS for particles etc)
 - For UI use HTML only, never canvas
 - Never modify CSS from JS manually, only update classes
-- no "Start Screen" just directly the game
+- no "Start Screen" just directly the game, no Commands UI, just the game clean and simple
 - its a prototype, it must be really cool and shiny not basic and sad
+- always make a final step to polish everything once everything is setup
+- Never add logs, they're useless and make the console unreadable
 
 ## Create folder for [game]
 - [game]/index.html - HTML + Tailwind CSS only
@@ -15,7 +17,7 @@ Goal: Fast game prototyping
 - [game]/state.js: JUST one object globally accessibly
 - [game]/ui.js: - UI manipulations functions to keep other files clean from it
 - [game]/map.js: light, ground... other required elements from context, including random also nicely tricks the eye
-- [game]/camera.js - handle AWSD movement and mouse for orientation
+- [game]/camera.js - depends on the game but if not mentioned usually click to move and buttons for actions so its mobile-friendly
 - [game]/player.js - Player logic
 - [game]/[element].js (If needed eg: zombie, enemy, etc...) any significant element deserves his file
 - [game]/loop.js: base-loop, the boilerplate not related to the game preventing pollution of the strategical point logic.js
@@ -25,7 +27,9 @@ Goal: Fast game prototyping
 
 # Game Specs
 
-[game] gladiator
+[game] melody
 [specs]
-Make a chill gladiator round-per-round no movement just 2d but in 3d perspective
-and you just need to tap or defend 
+- super simple very cute game
+- just a character that moves gently with mouse click towards direction of cursor
+- on the ground, beautiful colorful tiles that when we walk on it they make their associated joyful note
+- player must look like its walking and be a little cool
