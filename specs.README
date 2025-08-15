@@ -11,6 +11,7 @@ Goal: Fast game prototyping
 
 ## Create folder for [game]
 - [game]/index.html - HTML + Tailwind CSS only
+- [game]/constants.js: Easily modify the mechanics without diving into the code, spawn durations, max_health etc
 - [game]/state.js: JUST one object globally accessibly
 - [game]/ui.js: - UI manipulations functions to keep other files clean from it
 - [game]/map.js: light, ground... other required elements from context, including random also nicely tricks the eye
