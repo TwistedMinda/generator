@@ -1,7 +1,7 @@
 Goal: Fast game prototyping
 
 # Rules
-- no JS classes, simple functions only
+- no ES6 modules, no JS classes, simple functions only and <script>
 - Tailwind only, no basic CSS
 - Use threeJS and make 3D game if not asked (even if user asks 2D game use threeJS for particles etc)
 - For UI use HTML only, never canvas
@@ -12,24 +12,13 @@ Goal: Fast game prototyping
 - Never add logs, they're useless and make the console unreadable
 
 ## Create folder for [game]
-- [game]/index.html - HTML + Tailwind CSS only
-- [game]/constants.js: Easily modify the mechanics without diving into the code, spawn durations, max_health etc
-- [game]/state.js: JUST one object globally accessibly
-- [game]/ui.js: - UI manipulations functions to keep other files clean from it
-- [game]/map.js: light, ground... other required elements from context, including random also nicely tricks the eye
-- [game]/camera.js - depends on the game but if not mentioned usually click to move and buttons for actions so its mobile-friendly
-- [game]/player.js - Player logic
-- [game]/[element].js (If needed eg: zombie, enemy, etc...) any significant element deserves his file
-- [game]/loop.js: base-loop, the boilerplate not related to the game preventing pollution of the strategical point logic.js
-- [game]/logic.js: base game flow
-- [game]/particle-effects.js: all effects, really focus on this part because thats where all the magic happens for a prototype
-- [game]/sounds.js: using oscialltor only -- minimum ambient melody and basic actions soundeffects, but smooth, never too realistic
+- [game]/index.html - HTML + Tailwind CSS only + call initScene
+- [game]/map.js: light, ground, ambiance
+- [game]/camera.js - simple camera
+- [game]/init.js: expose initScene function, linking everything together and looping
 
 # Game Specs
 
-[game] melody
+[game] trading-panel
 [specs]
-- super simple very cute game
-- just a character that moves gently with mouse click towards direction of cursor
-- on the ground, beautiful colorful tiles that when we walk on it they make their associated joyful note
-- player must look like its walking and be a little cool
+- We'll make a 3D Chart! for start just show a rectangle

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Trading Chart</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        
+        /* Slider styling */
+        .slider {
+            -webkit-appearance: none;
+            background: #374151;
+            outline: none;
+            border-radius: 6px;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid #1e40af;
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: 2px solid #1e40af;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <div id="chart-container" class="w-full h-screen relative">
+        <!-- Test Control Panel -->
+        <div class="absolute top-4 left-4 z-10">
+            <div class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 shadow-2xl">
+                <h3 class="text-blue-400 text-lg font-bold mb-3">Candle Test</h3>
+                
+                <button id="start-pause-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full">
+                    Start
+                </button>
+                
+                <div class="w-full">
+                    <input type="range" id="step-slider" min="0" max="13" value="0" 
+                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>0</span>
+                        <span>13</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sequence Selector -->
+        <div class="absolute top-4 right-4 z-10">
+            <div id="sequence-buttons" class="flex flex-col space-y-1">
+                <!-- Buttons will be generated here -->
+            </div>
+        </div>
+        
+
+    </div>
+
+    <script src="map.js"></script>
+    <script src="camera.js"></script>
+    <script src="candle.js"></script>
+    <script src="chart.js"></script>
+    <script src="price-scale.js"></script>
+    <script src="sequences/simple.js"></script>
+    <script src="sequences/medium.js"></script>
+    <script src="sequences/complex.js"></script>
+    <script src="fake.js"></script>
+    <script>
+        // Initialize the 3D scene
+        initScene();
+        initCamera();
+        animate();
+    </script>
+</body>
+</html>
