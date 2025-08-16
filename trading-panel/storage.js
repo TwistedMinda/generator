@@ -33,6 +33,7 @@ function addLivePrice(price) {
     }
     
     saveLiveCandles(candles);
+    console.log('Live candles after price update:', candles);
     return candles;
 }
 

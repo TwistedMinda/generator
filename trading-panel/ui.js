@@ -69,20 +69,20 @@ function startLiveTracking() {
     // Load chart from storage
     loadLiveChartFromStorage();
     
-    // Fetch price every 30 seconds
+    // Fetch price every 15 seconds
     livePriceInterval = setInterval(async () => {
         const price = await fetchSolanaPrice();
         if (price) {
             addLivePrice(price);
             loadLiveChartFromStorage();
         }
-    }, 30000);
+    }, 15000);
     
-    // Create new candle every 2 minutes
+    // Create new candle every 1 minute
     liveCandleInterval = setInterval(() => {
         addNewLiveCandle();
         loadLiveChartFromStorage();
-    }, 120000);
+    }, 60000);
 }
 
 // Load live chart from storage
