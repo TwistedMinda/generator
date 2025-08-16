@@ -56,48 +56,28 @@
 </head>
 <body class="bg-gray-900">
     <div id="chart-container" class="w-full h-screen relative">
-        <!-- Test Control Panel -->
-        <div class="absolute top-4 left-4 z-10">
-            <div class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 shadow-2xl w-48">
-                <h3 class="text-blue-400 text-lg font-bold mb-3">Candle Test</h3>
-                
-                <button id="start-pause-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full">
-                    Start
-                </button>
-                
-                <div id="slider-container" class="w-full">
-                    <input type="range" id="step-slider" min="0" max="13" value="0" 
-                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
-                    <div class="flex justify-between text-xs text-gray-400 mt-1">
-                        <span>0</span>
-                        <span>13</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Sequence Selector -->
-        <div class="absolute top-4 right-4 z-10">
-            <div id="sequence-buttons" class="flex flex-col space-y-2 w-28">
-                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="simple">
+        <!-- Story Buttons at Top -->
+        <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+            <div id="sequence-buttons" class="flex space-x-2">
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 backdrop-blur-sm relative overflow-hidden" data-sequence="simple">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
                     <div class="relative z-10 flex items-center justify-center">
-                        <span class="text-shadow-sm">Simple Test</span>
+                        <span class="text-shadow-sm">Simple</span>
                     </div>
                 </button>
-                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="medium">
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 backdrop-blur-sm relative overflow-hidden" data-sequence="medium">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
                     <div class="relative z-10 flex items-center justify-center">
-                        <span class="text-shadow-sm">Medium Test</span>
+                        <span class="text-shadow-sm">Medium</span>
                     </div>
                 </button>
-                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="complex">
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 backdrop-blur-sm relative overflow-hidden" data-sequence="complex">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
                     <div class="relative z-10 flex items-center justify-center">
-                        <span class="text-shadow-sm">Complex Test</span>
+                        <span class="text-shadow-sm">Complex</span>
                     </div>
                 </button>
-                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="realtime">
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 backdrop-blur-sm relative overflow-hidden" data-sequence="realtime">
                     <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
                     <div class="relative z-10 flex items-center justify-center">
                         <span class="text-shadow-sm">Realtime</span>
@@ -106,6 +86,40 @@
             </div>
         </div>
         
+        <!-- LIVE Button at Top Right -->
+        <div class="absolute top-4 right-4 z-10">
+            <div class="relative">
+                <button id="live-btn" class="bg-gradient-to-br from-green-600 via-green-500 to-green-600 hover:from-green-500 hover:via-green-400 hover:to-green-500 text-white px-4 py-2 rounded-lg font-bold transition-all duration-300 shadow-lg border border-green-400/60 hover:border-green-300/80 hover:scale-105 hover:shadow-green-400/30 backdrop-blur-sm relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10">
+                        <span class="text-shadow-sm">LIVE</span>
+                    </div>
+                </button>
+                
+                <!-- Live Info Box -->
+                <div id="live-info" class="absolute top-14 right-0 bg-gray-900/95 backdrop-blur-sm border border-green-500/30 rounded-xl p-3 shadow-2xl w-48 hidden">
+                    <div class="text-green-400 text-sm font-bold mb-1">Live Feed</div>
+                    <div class="text-gray-300 text-xs">Bitcoin</div>
+                </div>
+            </div>
+        </div>
+        <!-- Controls at Bottom Center -->
+        <div id="controls-panel" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 hidden">
+            <div class="flex items-center space-x-3">
+                <button id="start-pause-btn" class="bg-green-600 hover:bg-green-700 text-white py-1 rounded text-xs font-semibold whitespace-nowrap text-center" style="width: 60px;">
+                    Start
+                </button>
+                
+                <div id="slider-container" class="">
+                    <input type="range" id="step-slider" min="0" max="13" value="0" 
+                           class="w-64 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                    <div class="flex justify-between text-xs text-gray-400 mt-1">
+                        <span>0</span>
+                        <span>13</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -119,12 +133,16 @@
                <script src="sequences/medium.js"></script>
                <script src="sequences/complex.js"></script>
                <script src="sequences/realtime.js"></script>
-    <script src="fake.js"></script>
+    <script src="story.js"></script>
+    <script src="ui.js"></script>
     <script>
         // Initialize the 3D scene
         initScene();
         initCamera();
         animate();
+        
+        // Initialize live button
+        initLiveButton();
     </script>
 </body>
 </html>

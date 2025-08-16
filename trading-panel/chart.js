@@ -382,11 +382,10 @@ class Chart {
 // Global chart instance
 let chart = new Chart();
 
-// Initialize with sample data
+// Initialize chart (empty by default)
 function initChart() {
-    // Initialize with step 0 data
-    const initialData = fakeData.getCurrentStepData();
-    chart.rebuildFromState(initialData.candles);
+    // Start with an empty chart - no story selected
+    chart.candles = [];
     
     return chart;
 }

@@ -1,12 +1,12 @@
-// Fake candle generator
+// Story candle generator
 
-class FakeDataGenerator {
+class StoryDataGenerator {
     constructor() {
         this.currentStep = 0;
         this.isRunning = false;
+        this.currentSequence = null;
         
-        // Load complex sequence by default
-        this.loadSequence('simple');
+        // No sequence loaded by default
     }
     
     // Load a sequence from JS file
@@ -85,6 +85,13 @@ class FakeDataGenerator {
     }
 
     getProgress() {
+        if (!this.stepChanges) {
+            return {
+                current: 0,
+                total: 0,
+                percentage: 0
+            };
+        }
         return {
             current: this.currentStep,
             total: this.stepChanges.length - 1,
@@ -110,5 +117,5 @@ const availableSequences = [
     { name: 'realtime', displayName: 'Realtime', description: 'Live candle generation with realistic price movements' }
 ];
 
-// Global fake data generator
-let fakeData = new FakeDataGenerator();
+// Global story data generator
+let storyData = new StoryDataGenerator();

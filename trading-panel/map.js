@@ -58,16 +58,16 @@ function updateCandles() {
 }
 
 function startPriceUpdates() {
-    // Update chart using fake data
+    // Update chart using story data
     priceUpdateTimer = setInterval(() => {
-        if (fakeData.isRunning) {
+        if (storyData.isRunning) {
             // Handle realtime sequence differently
-            if (fakeData.currentSequence === 'realtime') {
+            if (storyData.currentSequence === 'realtime') {
                 updateRealtimeData();
             } else {
                 // Handle regular sequences
-                if (!fakeData.isComplete()) {
-                    const nextStep = fakeData.getNextStep();
+                if (!storyData.isComplete()) {
+                    const nextStep = storyData.getNextStep();
                     if (nextStep !== null) {
                         // Animate each candle to its new values
                         nextStep.candles.forEach((candleData, index) => {
@@ -90,11 +90,11 @@ function startPriceUpdates() {
                     }
                 }
                 
-                if (fakeData.isComplete()) {
+                if (storyData.isComplete()) {
                     stopPriceUpdates();
                     const startPauseBtn = document.getElementById('start-pause-btn');
                     startPauseBtn.textContent = 'Completed';
-                    startPauseBtn.className = 'bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold cursor-not-allowed';
+                    startPauseBtn.className = 'bg-gray-600 text-white py-2 rounded text-sm font-semibold cursor-not-allowed text-center';
                     startPauseBtn.disabled = true;
                 }
             }
@@ -145,16 +145,23 @@ function stopPriceUpdates() {
 
 
 function updateSlider() {
-    // Hide slider for realtime sequence
     const sliderContainer = document.querySelector('#slider-container');
-    if (fakeData.currentSequence === 'realtime') {
+    
+    // Hide slider if no story is selected
+    if (!storyData.currentSequence) {
+        sliderContainer.style.display = 'none';
+        return;
+    }
+    
+    // Hide slider for realtime sequence
+    if (storyData.currentSequence === 'realtime') {
         sliderContainer.style.display = 'none';
         return;
     } else {
         sliderContainer.style.display = 'block';
     }
     
-    const progress = fakeData.getProgress();
+    const progress = storyData.getProgress();
     const slider = document.getElementById('step-slider');
     const maxLabel = document.querySelector('.flex.justify-between span:last-child');
     
@@ -175,18 +182,18 @@ function setupTestControls() {
     
     // Start/Pause button
     startPauseBtn.addEventListener('click', () => {
-        if (fakeData.isRunning) {
+        if (storyData.isRunning) {
             // Pause
-            fakeData.stop();
+            storyData.stop();
             stopPriceUpdates();
             startPauseBtn.textContent = 'Start';
-            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
+            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
         } else {
             // Start
-            fakeData.start();
+            storyData.start();
             startPriceUpdates();
             startPauseBtn.textContent = 'Pause';
-            startPauseBtn.className = 'bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
+            startPauseBtn.className = 'bg-yellow-600 hover:bg-yellow-700 text-white py-2 rounded text-sm font-semibold text-center';
         }
         updateSlider();
     });
@@ -196,15 +203,15 @@ function setupTestControls() {
         const targetStep = parseInt(e.target.value);
         
         // Pause auto-advancement when manually controlling slider
-        if (fakeData.isRunning) {
-            fakeData.stop();
+        if (storyData.isRunning) {
+            storyData.stop();
             stopPriceUpdates();
             startPauseBtn.textContent = 'Start';
-            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
+            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
         }
         
         // Jump to specific step with animation
-        const stepData = fakeData.jumpToStep(targetStep);
+        const stepData = storyData.jumpToStep(targetStep);
         if (stepData) {
             // Animate each candle to its new values
             stepData.candles.forEach((candleData, index) => {
@@ -235,22 +242,22 @@ function setupSequenceSelector() {
             const sequenceName = button.getAttribute('data-sequence');
             
             // Stop any running updates
-            if (fakeData.isRunning) {
-                fakeData.stop();
+            if (storyData.isRunning) {
+                storyData.stop();
                 stopPriceUpdates();
             }
             
             // Reset start button to initial state
             const startPauseBtn = document.getElementById('start-pause-btn');
             startPauseBtn.textContent = 'Start';
-            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
+            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
             startPauseBtn.disabled = false;
             
             // Load the selected sequence
-            fakeData.loadSequence(sequenceName);
+            storyData.loadSequence(sequenceName);
             
             // Update chart with new sequence
-            const stepData = fakeData.getCurrentStepData();
+            const stepData = storyData.getCurrentStepData();
             chart.rebuildFromState(stepData.candles);
             updateCandles();
             
@@ -259,6 +266,9 @@ function setupSequenceSelector() {
             
             // Update button styles
             updateSequenceButtonStyles();
+            
+            // Show controls when a story is selected
+            showControlsForStory();
         });
     });
     
@@ -271,10 +281,12 @@ function updateSequenceButtonStyles() {
     buttons.forEach(button => {
         const sequenceName = button.getAttribute('data-sequence');
         
-        if (fakeData.currentSequence === sequenceName) {
+        if (storyData.currentSequence === sequenceName) {
+            // Active state - purple gradient
             button.classList.remove('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
             button.classList.add('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
         } else {
+            // Inactive state - slate gradient
             button.classList.remove('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
             button.classList.add('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
         }
