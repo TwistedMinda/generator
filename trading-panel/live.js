@@ -10,7 +10,12 @@ function calculateLiveScale(symbol = currentSymbol) {
     const candles = getLiveCandles(symbol);
     
     if (candles.length === 0) {
-        // Default scale when no data
+        // Default scale when no data - use sequence-specific defaults
+        const sequenceVar = window[currentSymbol + 'Sequence'] || window['solSequence'];
+        if (sequenceVar && sequenceVar.scale) {
+            return sequenceVar.scale;
+        }
+        // Fallback default scale
         return {
             min: 0,
             max: 100,
@@ -132,6 +137,11 @@ function loadLiveChartFromStorage(symbol = currentSymbol) {
         liveCandles.forEach(candleData => {
             chart.addCandle(candleData.open, candleData.close, candleData.high, candleData.low);
         });
+    } else {
+        // If no data, create a placeholder candle to show the scale
+        const scale = calculateLiveScale(symbol);
+        const placeholderPrice = scale.base;
+        chart.addCandle(placeholderPrice, placeholderPrice, placeholderPrice, placeholderPrice);
     }
     
     updateCandles();
