@@ -18,6 +18,11 @@ class Chart {
         };
         
         this.candles.push(candleData);
+        
+        // Create firework effect for new candle
+        const position = this.getCandlePosition(this.candles.length - 1);
+        particleSystem.createCandleFirework(position);
+        
         return candleData;
     }
 
@@ -90,12 +95,14 @@ class Chart {
             const valuesToUse = animatedValues || candleData;
             
             // Create the candle mesh with current (possibly animated) values
+            const isActive = i === this.candles.length - 1; // Last candle is active
             const candleMesh = createCandle(
                 valuesToUse.open,
                 valuesToUse.close,
                 valuesToUse.high,
                 valuesToUse.low,
-                position
+                position,
+                isActive
             );
             
             candleMeshes.push(candleMesh);
@@ -140,6 +147,19 @@ class Chart {
         const lastCandleIndex = this.candles.length - 1;
         const lastCandle = this.candles[lastCandleIndex];
         
+        // Always trigger subtle effect when replacing candle data
+        const isBullish = close > lastCandle.close;
+        
+        // Use the current candle's exit position directly
+        const exitPosition = this.getLastCandleExitPosition();
+        const effectPosition = { 
+            x: exitPosition.x, 
+            y: exitPosition.y, 
+            z: exitPosition.z 
+        };
+        
+        particleSystem.createCloseChangeEffect(effectPosition, isBullish);
+        
         // Start smooth animation to new values
         this.animateCandleTo(lastCandleIndex, open, close, high, low);
         
@@ -150,6 +170,19 @@ class Chart {
     animateCandleTo(candleIndex, targetOpen, targetClose, targetHigh, targetLow, duration = 500) {
         const candle = this.candles[candleIndex];
         if (!candle) return;
+        
+        // Always trigger subtle effect when animating candle data
+        const isBullish = targetClose > candle.close;
+        
+        // Use the current candle's exit position directly
+        const exitPosition = this.getLastCandleExitPosition();
+        const effectPosition = { 
+            x: exitPosition.x, 
+            y: exitPosition.y, 
+            z: exitPosition.z 
+        };
+        
+        particleSystem.createCloseChangeEffect(effectPosition, isBullish);
         
         // Store current values as starting point
         const startValues = {
@@ -225,6 +258,37 @@ class Chart {
     // Check if any candles are currently animating
     hasActiveAnimations() {
         return this.candles.some(candle => candle.animation && candle.animation.isActive);
+    }
+    
+    // Check for wick taps and trigger effects
+    checkWickTaps() {
+        if (this.candles.length === 0) return;
+        
+        const lastCandle = this.candles[this.candles.length - 1];
+        const lastPosition = this.getCandlePosition(this.candles.length - 1);
+        
+        // Check if close price is near high or low (wick level)
+        const priceRange = lastCandle.high - lastCandle.low;
+        const closeToHigh = Math.abs(lastCandle.close - lastCandle.high) < priceRange * 0.1;
+        const closeToLow = Math.abs(lastCandle.close - lastCandle.low) < priceRange * 0.1;
+        
+        if (closeToHigh || closeToLow) {
+            // Calculate wick position
+            const worldPrices = priceScale.candleToWorld({
+                open: lastCandle.open,
+                close: lastCandle.close,
+                high: lastCandle.high,
+                low: lastCandle.low
+            });
+            
+            const wickY = closeToHigh ? 
+                lastPosition.y + worldPrices.high - worldPrices.open :
+                lastPosition.y + worldPrices.low - worldPrices.open;
+            
+            const wickPosition = { x: lastPosition.x, y: wickY, z: lastPosition.z };
+            const direction = closeToHigh ? 'up' : 'down';
+            particleSystem.createWickTap(wickPosition, direction);
+        }
     }
 
     // Rebuild chart from complete state
@@ -306,11 +370,9 @@ class Chart {
 
     // Debug function to log candle positions
     debugPositions() {
-        console.log('Chart Debug - Candle Positions:');
         for (let i = 0; i < this.candles.length; i++) {
             const candle = this.candles[i];
             const position = this.getCandlePosition(i);
-            console.log(`Candle ${i}: Open=${candle.open}, Close=${candle.close}, Position=(${position.x}, ${position.y}, ${position.z})`);
         }
         const exitPos = this.getLastCandleExitPosition();
         console.log(`Last Exit Position: (${exitPos.x}, ${exitPos.y}, ${exitPos.z}) Price=${exitPos.price}`);

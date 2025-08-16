@@ -31,6 +31,12 @@ function initScene() {
     
     // Add price scale markers
     createPriceScaleMarkers();
+    
+    // Initialize particles in scene
+    const initialParticleMeshes = particleSystem.getParticleMeshes();
+    initialParticleMeshes.forEach(particle => {
+        scene.add(particle);
+    });
 
     // Handle window resize
     window.addEventListener('resize', onWindowResize, false);
@@ -228,6 +234,18 @@ function setupSequenceSelector() {
         button.addEventListener('click', () => {
             const sequenceName = button.getAttribute('data-sequence');
             
+            // Stop any running updates
+            if (fakeData.isRunning) {
+                fakeData.stop();
+                stopPriceUpdates();
+            }
+            
+            // Reset start button to initial state
+            const startPauseBtn = document.getElementById('start-pause-btn');
+            startPauseBtn.textContent = 'Start';
+            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
+            startPauseBtn.disabled = false;
+            
             // Load the selected sequence
             fakeData.loadSequence(sequenceName);
             
@@ -400,10 +418,29 @@ function animate() {
         updateCamera();
     }
     
+    // Update particles
+    particleSystem.update();
+    
     // Check if any candles are animating and update them
     if (chart && chart.hasActiveAnimations()) {
         updateCandles();
     }
+    
+    // Check for wick taps
+    if (chart) {
+        chart.checkWickTaps();
+    }
+    
+    // Animate flashing spheres on active candles
+    candleMeshes.forEach(candle => {
+        candle.children.forEach(child => {
+            if (child.userData && child.userData.isActive && child.userData.flashSpeed) {
+                const time = Date.now() * child.userData.flashSpeed;
+                const opacity = child.userData.originalOpacity * (0.5 + 0.5 * Math.sin(time));
+                child.material.opacity = opacity;
+            }
+        });
+    });
     
     renderer.render(scene, camera);
 }
