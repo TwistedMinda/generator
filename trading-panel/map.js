@@ -278,13 +278,13 @@ function setupLighting() {
 function createPriceScaleMarkers() {
     // Create price markers at key levels
     const pricelevels = [30, 40, 50, 60, 70]; // Price levels to show
-    const markerX = -2; // Position to the left of candles
+    const markerX = -4; // Position to the left of candles
     
     pricelevels.forEach(price => {
         const worldY = priceScale.priceToWorldY(price);
         
         // Create a small sphere marker
-        const markerGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+        const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
         const markerMaterial = new THREE.MeshBasicMaterial({ 
             color: price === 50 ? 0xffff00 : 0x888888 // Yellow for $50 (base), gray for others
         });
@@ -294,8 +294,8 @@ function createPriceScaleMarkers() {
         
         // Create a line extending to the right
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(markerX + 0.1, worldY, 0),
-            new THREE.Vector3(markerX + 0.5, worldY, 0)
+            new THREE.Vector3(markerX + 0.3, worldY, 0),
+            new THREE.Vector3(markerX + 2.5, worldY, 0)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
             color: price === 50 ? 0xffff00 : 0x444444,
@@ -343,7 +343,7 @@ function createPriceScaleMarkers() {
     // Create horizontal reference lines across the scene
     [topY, bottomY].forEach((y, index) => {
         const refLineGeometry = new THREE.BufferGeometry().setFromPoints([
-            new THREE.Vector3(-1.5, y, 0),
+            new THREE.Vector3(-3.5, y, 0),
             new THREE.Vector3(4, y, 0)
         ]);
         const refLineMaterial = new THREE.LineBasicMaterial({ 

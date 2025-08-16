@@ -187,7 +187,7 @@ class Chart {
         context.textRenderingOptimization = 'optimizeSpeed';
         
         context.fillStyle = '#00ff00';
-        context.font = 'bold 64px Arial';
+        context.font = 'bold 80px Arial';
         context.textAlign = 'left';
         context.fillText(`$${currentPrice.toFixed(2)}`, 20, 90);
         
