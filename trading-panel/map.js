@@ -240,50 +240,53 @@ function setupSequenceSelector() {
     sequenceButtons.forEach(button => {
         button.addEventListener('click', () => {
             const sequenceName = button.getAttribute('data-sequence');
-            
-            // Stop any running updates
-            if (storyData.isRunning) {
-                storyData.stop();
-                stopPriceUpdates();
-            }
-            
-            // Reset start button to initial state
-            const startPauseBtn = document.getElementById('start-pause-btn');
-            startPauseBtn.textContent = 'Start';
-            startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
-            startPauseBtn.disabled = false;
-            
-            // Clear live mode flag
-            window.isLiveMode = false;
-            
-            // Load the selected sequence
-            storyData.loadSequence(sequenceName);
-            
-            // Update price scale based on sequence scale
-            const scale = getCurrentScale();
-            priceScale.updateScale(scale.min, scale.max, scale.base);
-            
-            // Update chart with new sequence
-            const stepData = storyData.getCurrentStepData();
-            chart.rebuildFromState(stepData.candles);
-            updateCandles();
-            
-            // Update price scale markers for new sequence
-            createPriceScaleMarkers();
-            
-            // Update slider for new sequence
-            updateSlider();
-            
-            // Update button styles
-            updateSequenceButtonStyles();
-            
-            // Show controls when a story is selected
-            showControlsForStory();
+            selectSequence(sequenceName);
         });
     });
     
     // Set initial active state
     updateSequenceButtonStyles();
+}
+
+function selectSequence(sequenceName) {
+    // Stop any running updates
+    if (storyData.isRunning) {
+        storyData.stop();
+        stopPriceUpdates();
+    }
+    
+    // Reset start button to initial state
+    const startPauseBtn = document.getElementById('start-pause-btn');
+    startPauseBtn.textContent = 'Start';
+    startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
+    startPauseBtn.disabled = false;
+    
+    // Clear live mode flag
+    window.isLiveMode = false;
+    
+    // Load the selected sequence
+    storyData.loadSequence(sequenceName);
+    
+    // Update price scale based on sequence scale
+    const scale = getCurrentScale();
+    priceScale.updateScale(scale.min, scale.max, scale.base);
+    
+    // Update chart with new sequence
+    const stepData = storyData.getCurrentStepData();
+    chart.rebuildFromState(stepData.candles);
+    updateCandles();
+    
+    // Update price scale markers for new sequence
+    createPriceScaleMarkers();
+    
+    // Update slider for new sequence
+    updateSlider();
+    
+    // Update button styles
+    updateSequenceButtonStyles();
+    
+    // Show controls when a story is selected
+    showControlsForStory();
 }
 
 function updateSequenceButtonStyles() {
