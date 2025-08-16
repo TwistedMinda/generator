@@ -64,8 +64,6 @@ function calculateLiveScale() {
     // Base is always the middle marker (index 2)
     const base = markers[2];
     
-    console.log('Live scale markers:', markers);
-    
     return { min, max, base, markers };
 }
 

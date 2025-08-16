@@ -306,10 +306,6 @@ function updateSequenceButtonStyles() {
     });
 }
 
-
-
-
-
 function setupLighting() {
     // Ambient light for overall illumination
     const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
