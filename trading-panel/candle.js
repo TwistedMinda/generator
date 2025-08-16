@@ -14,7 +14,15 @@ function createCandle(openPrice, closePrice, highPrice, lowPrice, position = { x
     
     // Determine if candle is bullish (green) or bearish (red)
     const isBullish = closePrice > openPrice;
-    const bodyColor = isBullish ? 0x00ff88 : 0xff4444;
+    let bodyColor;
+    
+    if (isActive) {
+        // Current/unfinished candle - use brighter, more saturated colors
+        bodyColor = isBullish ? 0x00ffaa : 0xff6666;
+    } else {
+        // Completed candle - use standard colors
+        bodyColor = isBullish ? 0x00ff88 : 0xff4444;
+    }
     
     // Calculate body dimensions in world coordinates
     const bodyHeight = Math.abs(worldPrices.close - worldPrices.open);
@@ -26,7 +34,9 @@ function createCandle(openPrice, closePrice, highPrice, lowPrice, position = { x
     const bodyMaterial = new THREE.MeshLambertMaterial({ 
         color: bodyColor,
         transparent: true,
-        opacity: isActive ? 0.8 : 0.6
+        opacity: isActive ? 0.9 : 0.6,
+        emissive: isActive ? bodyColor : 0x000000,
+        emissiveIntensity: isActive ? 0.1 : 0
     });
     const candleBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
     
@@ -43,7 +53,9 @@ function createCandle(openPrice, closePrice, highPrice, lowPrice, position = { x
     if (upperWickHeight > 0) {
         const upperWickGeometry = new THREE.CylinderGeometry(0.05, 0.05, upperWickHeight, 8);
         const upperWickMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0xcccccc 
+            color: isActive ? 0xffffff : 0xcccccc,
+            emissive: isActive ? 0x333333 : 0x000000,
+            emissiveIntensity: isActive ? 0.2 : 0
         });
         const upperWick = new THREE.Mesh(upperWickGeometry, upperWickMaterial);
         upperWick.position.y = bodyTop + upperWickHeight / 2;
@@ -56,7 +68,9 @@ function createCandle(openPrice, closePrice, highPrice, lowPrice, position = { x
     if (lowerWickHeight > 0) {
         const lowerWickGeometry = new THREE.CylinderGeometry(0.05, 0.05, lowerWickHeight, 8);
         const lowerWickMaterial = new THREE.MeshLambertMaterial({ 
-            color: 0xcccccc 
+            color: isActive ? 0xffffff : 0xcccccc,
+            emissive: isActive ? 0x333333 : 0x000000,
+            emissiveIntensity: isActive ? 0.2 : 0
         });
         const lowerWick = new THREE.Mesh(lowerWickGeometry, lowerWickMaterial);
         lowerWick.position.y = bodyBottom - lowerWickHeight / 2;
