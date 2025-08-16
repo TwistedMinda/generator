@@ -37,20 +37,35 @@
             cursor: pointer;
             border: 2px solid #1e40af;
         }
+        
+        /* Custom button animations */
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-12deg); }
+            100% { transform: translateX(100%) skewX(-12deg); }
+        }
+        
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Glow effect for active buttons */
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="bg-gray-900">
     <div id="chart-container" class="w-full h-screen relative">
         <!-- Test Control Panel -->
         <div class="absolute top-4 left-4 z-10">
-            <div class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 shadow-2xl">
+            <div class="bg-gray-900/90 backdrop-blur-sm border border-blue-500/30 rounded-xl p-4 shadow-2xl w-48">
                 <h3 class="text-blue-400 text-lg font-bold mb-3">Candle Test</h3>
                 
                 <button id="start-pause-btn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full">
                     Start
                 </button>
                 
-                <div class="w-full">
+                <div id="slider-container" class="w-full">
                     <input type="range" id="step-slider" min="0" max="13" value="0" 
                            class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
                     <div class="flex justify-between text-xs text-gray-400 mt-1">
@@ -63,8 +78,31 @@
         
         <!-- Sequence Selector -->
         <div class="absolute top-4 right-4 z-10">
-            <div id="sequence-buttons" class="flex flex-col space-y-1">
-                <!-- Buttons will be generated here -->
+            <div id="sequence-buttons" class="flex flex-col space-y-2 w-28">
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="simple">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">Simple Test</span>
+                    </div>
+                </button>
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="medium">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">Medium Test</span>
+                    </div>
+                </button>
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="complex">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">Complex Test</span>
+                    </div>
+                </button>
+                <button class="sequence-btn bg-gradient-to-br from-slate-800 via-slate-700 to-slate-800 hover:from-slate-700 hover:via-slate-600 hover:to-slate-700 text-white px-4 py-3 rounded-xl text-xs font-bold transition-all duration-300 shadow-2xl border border-slate-600/40 hover:border-slate-500/60 hover:scale-105 hover:shadow-purple-500/20 hover:shadow-2xl backdrop-blur-sm relative overflow-hidden" data-sequence="realtime">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">Realtime</span>
+                    </div>
+                </button>
             </div>
         </div>
         
@@ -76,9 +114,10 @@
     <script src="candle.js"></script>
     <script src="chart.js"></script>
     <script src="price-scale.js"></script>
-    <script src="sequences/simple.js"></script>
-    <script src="sequences/medium.js"></script>
-    <script src="sequences/complex.js"></script>
+                   <script src="sequences/simple.js"></script>
+               <script src="sequences/medium.js"></script>
+               <script src="sequences/complex.js"></script>
+               <script src="sequences/realtime.js"></script>
     <script src="fake.js"></script>
     <script>
         // Initialize the 3D scene

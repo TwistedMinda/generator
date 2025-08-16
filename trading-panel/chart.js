@@ -179,13 +179,17 @@ class Chart {
         // Create price text
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        canvas.width = 256;
-        canvas.height = 64;
+        canvas.width = 512;
+        canvas.height = 128;
+        
+        // Enable crisp text rendering
+        context.imageSmoothingEnabled = false;
+        context.textRenderingOptimization = 'optimizeSpeed';
         
         context.fillStyle = '#00ff00';
-        context.font = 'bold 32px Arial';
+        context.font = 'bold 64px Arial';
         context.textAlign = 'left';
-        context.fillText(`$${currentPrice.toFixed(2)}`, 10, 45);
+        context.fillText(`$${currentPrice.toFixed(2)}`, 20, 90);
         
         const texture = new THREE.CanvasTexture(canvas);
         const textMaterial = new THREE.MeshBasicMaterial({ 
@@ -194,9 +198,9 @@ class Chart {
             side: THREE.DoubleSide
         });
         
-        const textGeometry = new THREE.PlaneGeometry(2.0, 0.5);
+        const textGeometry = new THREE.PlaneGeometry(4.0, 1.0);
         const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.position.set(candlePosition.x + lineLength + 1.0, worldPrice + 0.1, 0);
+        textMesh.position.set(candlePosition.x + lineLength + 2.0, worldPrice + 0.1, 0);
         
         // Group the line, sphere, and text together
         const priceLineGroup = new THREE.Group();

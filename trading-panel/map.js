@@ -5,7 +5,6 @@ function initScene() {
     // Create scene
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x0a0a0a);
-    scene.fog = new THREE.Fog(0x0a0a0a, 10, 50);
 
     // Create renderer
     renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -55,23 +54,68 @@ function updateCandles() {
 function startPriceUpdates() {
     // Update chart using fake data
     priceUpdateTimer = setInterval(() => {
-        if (fakeData.isRunning && !fakeData.isComplete()) {
-            const nextStep = fakeData.getNextStep();
-            if (nextStep !== null) {
-                chart.rebuildFromState(nextStep.candles);
-                updateCandles();
-                updateSlider();
+        if (fakeData.isRunning) {
+            // Handle realtime sequence differently
+            if (fakeData.currentSequence === 'realtime') {
+                updateRealtimeData();
+            } else {
+                // Handle regular sequences
+                if (!fakeData.isComplete()) {
+                    const nextStep = fakeData.getNextStep();
+                    if (nextStep !== null) {
+                        chart.rebuildFromState(nextStep.candles);
+                        updateCandles();
+                        updateSlider();
+                    }
+                }
+                
+                if (fakeData.isComplete()) {
+                    stopPriceUpdates();
+                    const startPauseBtn = document.getElementById('start-pause-btn');
+                    startPauseBtn.textContent = 'Completed';
+                    startPauseBtn.className = 'bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold cursor-not-allowed';
+                    startPauseBtn.disabled = true;
+                }
             }
         }
+    }, 1000); // Check every second for updates
+}
+
+function updateRealtimeData() {
+    if (!realtimeData.isRunning) {
+        realtimeData.start();
+    }
+    
+    // Update current candle every 3 seconds
+    if (realtimeData.shouldUpdate()) {
+        const updatedCandle = realtimeData.generatePriceMovement();
+        realtimeData.lastUpdateTime = Date.now();
         
-        if (fakeData.isComplete()) {
-            stopPriceUpdates();
-            const startPauseBtn = document.getElementById('start-pause-btn');
-            startPauseBtn.textContent = 'Completed';
-            startPauseBtn.className = 'bg-gray-600 text-white px-4 py-2 rounded text-sm font-semibold cursor-not-allowed';
-            startPauseBtn.disabled = true;
+        // Update the last candle in the chart
+        if (chart.candles.length > 0) {
+            const lastCandle = chart.candles[chart.candles.length - 1];
+            lastCandle.close = updatedCandle.close;
+            lastCandle.high = updatedCandle.high;
+            lastCandle.low = updatedCandle.low;
+            
+            // Rebuild chart to show updated candle
+            chart.rebuildFromState(chart.candles);
+            updateCandles();
         }
-    }, 2000); // 2 seconds per step for better observation
+    }
+    
+    // Start new candle every 1 minute
+    if (realtimeData.shouldStartNewCandle()) {
+        realtimeData.startNewCandle();
+        
+        // Add new candle to chart
+        const newCandle = realtimeData.getCurrentCandle();
+        chart.addCandle(newCandle.open, newCandle.close, newCandle.high, newCandle.low);
+        
+        // Rebuild chart to show new candle
+        chart.rebuildFromState(chart.candles);
+        updateCandles();
+    }
 }
 
 function stopPriceUpdates() {
@@ -84,6 +128,15 @@ function stopPriceUpdates() {
 
 
 function updateSlider() {
+    // Hide slider for realtime sequence
+    const sliderContainer = document.querySelector('#slider-container');
+    if (fakeData.currentSequence === 'realtime') {
+        sliderContainer.style.display = 'none';
+        return;
+    } else {
+        sliderContainer.style.display = 'block';
+    }
+    
     const progress = fakeData.getProgress();
     const slider = document.getElementById('step-slider');
     const maxLabel = document.querySelector('.flex.justify-between span:last-child');
@@ -143,26 +196,14 @@ function setupTestControls() {
 }
 
 function setupSequenceSelector() {
-    const sequenceButtonsContainer = document.getElementById('sequence-buttons');
+    const sequenceButtons = document.querySelectorAll('.sequence-btn');
     
-    // Clear existing buttons
-    sequenceButtonsContainer.innerHTML = '';
-    
-    // Create buttons for each sequence
-    availableSequences.forEach(sequence => {
-        const button = document.createElement('button');
-        button.className = 'bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors';
-        button.textContent = sequence.name;
-        button.title = sequence.description;
-        
-        // Highlight current sequence
-        if (fakeData.currentSequence === sequence.name) {
-            button.className = 'bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors';
-        }
-        
+    sequenceButtons.forEach(button => {
         button.addEventListener('click', () => {
+            const sequenceName = button.getAttribute('data-sequence');
+            
             // Load the selected sequence
-            fakeData.loadSequence(sequence.name);
+            fakeData.loadSequence(sequenceName);
             
             // Update chart with new sequence
             const stepData = fakeData.getCurrentStepData();
@@ -175,19 +216,23 @@ function setupSequenceSelector() {
             // Update button styles
             updateSequenceButtonStyles();
         });
-        
-        sequenceButtonsContainer.appendChild(button);
     });
+    
+    // Set initial active state
+    updateSequenceButtonStyles();
 }
 
 function updateSequenceButtonStyles() {
-    const buttons = document.querySelectorAll('#sequence-buttons button');
-    buttons.forEach((button, index) => {
-        const sequence = availableSequences[index];
-        if (fakeData.currentSequence === sequence.name) {
-            button.className = 'bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors';
+    const buttons = document.querySelectorAll('.sequence-btn');
+    buttons.forEach(button => {
+        const sequenceName = button.getAttribute('data-sequence');
+        
+        if (fakeData.currentSequence === sequenceName) {
+            button.classList.remove('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
+            button.classList.add('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
         } else {
-            button.className = 'bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs font-medium transition-colors';
+            button.classList.remove('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
+            button.classList.add('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
         }
     });
 }
@@ -263,13 +308,17 @@ function createPriceScaleMarkers() {
         // Create price text label
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        canvas.width = 256;
-        canvas.height = 64;
+        canvas.width = 512;
+        canvas.height = 128;
+        
+        // Enable crisp text rendering
+        context.imageSmoothingEnabled = false;
+        context.textRenderingOptimization = 'optimizeSpeed';
         
         context.fillStyle = price === 50 ? '#ffff00' : '#888888';
-        context.font = 'bold 32px Arial';
+        context.font = 'bold 64px Arial';
         context.textAlign = 'right';
-        context.fillText(`$${price}`, 240, 45);
+        context.fillText(`$${price}`, 480, 90);
         
         const texture = new THREE.CanvasTexture(canvas);
         const textMaterial = new THREE.MeshBasicMaterial({ 
@@ -278,9 +327,9 @@ function createPriceScaleMarkers() {
             side: THREE.DoubleSide
         });
         
-        const textGeometry = new THREE.PlaneGeometry(3.2, 0.8);
+        const textGeometry = new THREE.PlaneGeometry(6.4, 1.6);
         const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-        textMesh.position.set(markerX - 1.8, worldY, 0);
+        textMesh.position.set(markerX - 3.6, worldY, 0);
         
         scene.add(textMesh);
     });

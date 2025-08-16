@@ -21,6 +21,15 @@ class FakeDataGenerator {
             
             // Reset to step 0 to show the base candle
             this.currentStep = 0;
+            
+            // Special handling for realtime sequence
+            if (sequenceName === 'realtime') {
+                // Initialize realtime data
+                realtimeData = new RealtimeDataGenerator();
+                // Start with a single candle
+                this.baseState = [realtimeData.getCurrentCandle()];
+                this.stepChanges = [{}];
+            }
         } else {
             console.error(`Sequence ${sequenceName} not found`);
         }
@@ -97,7 +106,8 @@ class FakeDataGenerator {
 const availableSequences = [
     { name: 'simple', displayName: 'Simple Test', description: 'Basic price movement test' },
     { name: 'medium', displayName: 'Medium Test', description: 'Extended price movement with multiple candles' },
-    { name: 'complex', displayName: 'Complex Test', description: 'Complex price movement with many candles and dramatic swings' }
+    { name: 'complex', displayName: 'Complex Test', description: 'Complex price movement with many candles and dramatic swings' },
+    { name: 'realtime', displayName: 'Realtime', description: 'Live candle generation with realistic price movements' }
 ];
 
 // Global fake data generator
