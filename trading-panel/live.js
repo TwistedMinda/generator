@@ -29,7 +29,7 @@ function calculateLiveScale() {
     
     // Add margin on each side
     const priceRange = maxPrice - minPrice;
-    const margin = Math.max(priceRange * LIVE_SCALE_MARGIN_PERCENT, LIVE_SCALE_MIN_MARGIN);
+    const margin = Math.max(priceRange * LIVE_MODE.MARGIN_PERCENT, LIVE_MODE.MIN_MARGIN);
     
     const min = Math.floor(minPrice - margin);
     const max = Math.ceil(maxPrice + margin);
@@ -79,23 +79,28 @@ function startLiveTracking() {
     updateLivePrice();
     
     // Fetch price every 15 seconds
-    livePriceInterval = setInterval(updateLivePrice, 15000);
+    livePriceInterval = setInterval(updateLivePrice, LIVE_MODE.PRICE_UPDATE_INTERVAL);
     
     // Create new candle every 1 minute
     liveCandleInterval = setInterval(() => {
         addNewLiveCandle();
         loadLiveChartFromStorage();
-    }, 60000);
+    }, LIVE_MODE.CANDLE_INTERVAL);
 }
 
 // Update live price from API
 async function updateLivePrice() {
-    const price = await fetchSolanaPrice();
-    if (price) {
-        addLivePrice(price);
-        loadLiveChartFromStorage();
+    try {
+        const price = await fetchSolanaPrice();
+        if (price) {
+            addLivePrice(price);
+            loadLiveChartFromStorage();
+        }
+    } catch (error) {
+        console.error('Failed to update live price:', error);
     }
 }
+
 
 // Load live chart from storage
 function loadLiveChartFromStorage() {

@@ -2,13 +2,23 @@
 
 // Get all live candles from localStorage
 function getLiveCandles() {
-    const candles = JSON.parse(localStorage.getItem(LIVE_CANDLES_KEY)) || [];
-    return candles;
+    try {
+        return JSON.parse(localStorage.getItem(LIVE_MODE.STORAGE_KEY)) || [];
+    } catch (error) {
+        console.error('Failed to parse candles from storage:', error);
+        return [];
+    }
 }
 
 // Save all live candles to localStorage
 function saveLiveCandles(candles) {
-    localStorage.setItem(LIVE_CANDLES_KEY, JSON.stringify(candles));
+    try {
+        localStorage.setItem(LIVE_MODE.STORAGE_KEY, JSON.stringify(candles));
+        return true;
+    } catch (error) {
+        console.error('Failed to save candles to storage:', error);
+        return false;
+    }
 }
 
 // Add new price to last candle or create first candle
@@ -17,7 +27,7 @@ function addLivePrice(price) {
     
     if (candles.length === 0) {
         // First price - create complete initial candle with realistic OHLC
-        const variance = price * 0.005; // 0.5% variance
+        const variance = price * LIVE_MODE.PRICE_VARIANCE;
         candles.push({
             open: price - variance * Math.random(),
             close: price,
@@ -59,5 +69,5 @@ function addNewLiveCandle() {
 
 // Clear all live candles
 function clearLiveCandles() {
-    localStorage.removeItem(LIVE_CANDLES_KEY);
+    localStorage.removeItem(LIVE_MODE.STORAGE_KEY);
 }
