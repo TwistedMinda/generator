@@ -4,6 +4,12 @@
 window.complexSequence = {
     name: "Complex Test",
     description: "High complexity with multiple changes per candle and dramatic movements",
+    scale: {
+        min: 30,
+        max: 70,
+        base: 50,
+        markers: [70, 60, 50, 40, 30]
+    },
     baseState: [
         { open: 50, close: 50.5, high: 50.8, low: 49.8 }
     ],

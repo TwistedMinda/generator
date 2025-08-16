@@ -17,7 +17,6 @@ class StoryDataGenerator {
             this.baseState = sequenceVar.baseState;
             this.stepChanges = sequenceVar.stepChanges;
             this.currentSequence = sequenceName;
-            console.log(`Loaded sequence: ${sequenceVar.name}`);
             
             // Reset to step 0 to show the base candle
             this.currentStep = 0;

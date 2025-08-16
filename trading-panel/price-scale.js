@@ -5,8 +5,16 @@
 
 class PriceScale {
     constructor() {
-        this.basePrice = 50; // $50 at y=0
-        this.unitsPerDollar = 0.5; // 1 world unit = $2, so 0.5 units per $1
+        this.basePrice = 50; // Default base price at y=0
+        this.unitsPerDollar = 0.5; // Default: 1 world unit = $2, so 0.5 units per $1
+    }
+    
+    // Update scale based on current sequence/live mode
+    updateScale(min, max, base) {
+        this.basePrice = base; // Base price at y=0
+        const priceRange = max - min;
+        const worldRange = 10; // Fixed world coordinate range
+        this.unitsPerDollar = worldRange / priceRange;
     }
 
     // Convert price to world Y coordinate

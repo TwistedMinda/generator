@@ -1,5 +1,6 @@
 // Global variables
 let scene, renderer, ground, lights = [], candleMeshes = [], priceUpdateTimer;
+let priceScaleMarkers = []; // Track price scale markers for cleanup
 
 function initScene() {
     // Create scene
@@ -29,8 +30,7 @@ function initScene() {
     // Setup lighting
     setupLighting();
     
-    // Add price scale markers
-    createPriceScaleMarkers();
+    // Price scale markers will be created when a sequence is selected
     
     // Initialize particles in scene
     const initialParticleMeshes = particleSystem.getParticleMeshes();
@@ -253,13 +253,23 @@ function setupSequenceSelector() {
             startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white py-2 rounded text-sm font-semibold text-center';
             startPauseBtn.disabled = false;
             
+            // Clear live mode flag
+            window.isLiveMode = false;
+            
             // Load the selected sequence
             storyData.loadSequence(sequenceName);
+            
+            // Update price scale based on sequence scale
+            const scale = getCurrentScale();
+            priceScale.updateScale(scale.min, scale.max, scale.base);
             
             // Update chart with new sequence
             const stepData = storyData.getCurrentStepData();
             chart.rebuildFromState(stepData.candles);
             updateCandles();
+            
+            // Update price scale markers for new sequence
+            createPriceScaleMarkers();
             
             // Update slider for new sequence
             updateSlider();
@@ -331,22 +341,57 @@ function setupLighting() {
     lights.push(pointLight);
 }
 
+// Get current scale settings based on active sequence or live mode
+function getCurrentScale() {
+    // Check if live mode is active
+    if (window.isLiveMode) {
+        return liveScale;
+    }
+    
+    // Check if a sequence is loaded
+    if (storyData.currentSequence) {
+        const sequenceVar = window[storyData.currentSequence + 'Sequence'];
+        if (sequenceVar && sequenceVar.scale) {
+            return sequenceVar.scale;
+        }
+    }
+    
+    // Default fallback scale
+    return {
+        min: 30,
+        max: 70,
+        base: 50,
+        markers: [30, 40, 50, 60, 70]
+    };
+}
+
+// Clear existing price scale markers
+function clearPriceScaleMarkers() {
+    priceScaleMarkers.forEach(marker => {
+        scene.remove(marker);
+    });
+    priceScaleMarkers = [];
+}
+
 function createPriceScaleMarkers() {
-    // Create price markers at key levels
-    const pricelevels = [30, 40, 50, 60, 70]; // Price levels to show
+    // Clear existing price scale markers
+    clearPriceScaleMarkers();
+    
+    const scale = getCurrentScale();
     const markerX = -4; // Position to the left of candles
     
-    pricelevels.forEach(price => {
+    scale.markers.forEach(price => {
         const worldY = priceScale.priceToWorldY(price);
         
         // Create a small sphere marker
         const markerGeometry = new THREE.SphereGeometry(0.15, 8, 8);
         const markerMaterial = new THREE.MeshBasicMaterial({ 
-            color: price === 50 ? 0xffff00 : 0x888888 // Yellow for $50 (base), gray for others
+            color: price === scale.base ? 0xffff00 : 0x888888 // Yellow for base price, gray for others
         });
         const marker = new THREE.Mesh(markerGeometry, markerMaterial);
         marker.position.set(markerX, worldY, 0);
         scene.add(marker);
+        priceScaleMarkers.push(marker);
         
         // Create a line extending to the right
         const lineGeometry = new THREE.BufferGeometry().setFromPoints([
@@ -354,12 +399,13 @@ function createPriceScaleMarkers() {
             new THREE.Vector3(markerX + 2.5, worldY, 0)
         ]);
         const lineMaterial = new THREE.LineBasicMaterial({ 
-            color: price === 50 ? 0xffff00 : 0x444444,
+            color: price === scale.base ? 0xffff00 : 0x444444,
             opacity: 0.7,
             transparent: true
         });
         const line = new THREE.Line(lineGeometry, lineMaterial);
         scene.add(line);
+        priceScaleMarkers.push(line);
         
         // Create price text label
         const canvas = document.createElement('canvas');
@@ -371,7 +417,7 @@ function createPriceScaleMarkers() {
         context.imageSmoothingEnabled = false;
         context.textRenderingOptimization = 'optimizeSpeed';
         
-        context.fillStyle = price === 50 ? '#ffff00' : '#888888';
+        context.fillStyle = price === scale.base ? '#ffff00' : '#888888';
         context.font = 'bold 64px Arial';
         context.textAlign = 'right';
         context.fillText(`$${price}`, 480, 90);
@@ -388,11 +434,12 @@ function createPriceScaleMarkers() {
         textMesh.position.set(markerX - 3.6, worldY, 0);
         
         scene.add(textMesh);
+        priceScaleMarkers.push(textMesh);
     });
     
     // Add reference lines for top and bottom of current range
-    const topPrice = 70;
-    const bottomPrice = 30;
+    const topPrice = scale.max;
+    const bottomPrice = scale.min;
     const topY = priceScale.priceToWorldY(topPrice);
     const bottomY = priceScale.priceToWorldY(bottomPrice);
     
@@ -409,6 +456,7 @@ function createPriceScaleMarkers() {
         });
         const refLine = new THREE.Line(refLineGeometry, refLineMaterial);
         scene.add(refLine);
+        priceScaleMarkers.push(refLine);
     });
 }
 

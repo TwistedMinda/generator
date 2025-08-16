@@ -4,8 +4,14 @@
 window.realtimeSequence = {
     name: "Realtime",
     description: "Live candle generation with realistic price movements",
+    scale: {
+        min: 30,
+        max: 70,
+        base: 50,
+        markers: [70, 60, 50, 40, 30]
+    },
     baseState: [
-        { open: 50, close: 50.5, high: 50.8, low: 49.8 }
+        { open: 60, close: 60.5, high: 60.8, low: 59.8 }
     ],
     stepChanges: [
         {} // Step 0: base state - will be dynamically updated
@@ -15,12 +21,12 @@ window.realtimeSequence = {
 // Realtime data generator
 class RealtimeDataGenerator {
     constructor() {
-        this.currentPrice = 50.5;
+        this.currentPrice = 60.5;
         this.currentCandle = {
-            open: 50,
-            close: 50.5,
-            high: 50.8,
-            low: 49.8
+            open: 60,
+            close: 60.5,
+            high: 60.8,
+            low: 59.8
         };
         this.candleStartTime = Date.now();
         this.lastUpdateTime = Date.now();

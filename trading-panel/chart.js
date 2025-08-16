@@ -4,7 +4,6 @@ class Chart {
     constructor() {
         this.candles = [];
         this.candleSpacing = 1.2; // Distance between candles on X axis
-        this.baseLevel = 50; // Base price level ($50) where first candle's entry price sits
     }
 
     // Add a candle to the chart
@@ -31,8 +30,9 @@ class Chart {
         const x = index * this.candleSpacing;
         
         if (index === 0) {
-            // First candle: position so entry price (group origin) is at baseLevel
-            const y = priceScale.priceToWorldY(this.baseLevel);
+            // First candle: position so entry price (group origin) is at the candle's open price
+            const firstCandle = this.candles[0];
+            const y = priceScale.priceToWorldY(firstCandle.open);
             return { x, y, z: 0 };
         } else {
             // Subsequent candles: position so entry price (group origin) aligns with previous exit price
@@ -375,7 +375,6 @@ class Chart {
             const position = this.getCandlePosition(i);
         }
         const exitPos = this.getLastCandleExitPosition();
-        console.log(`Last Exit Position: (${exitPos.x}, ${exitPos.y}, ${exitPos.z}) Price=${exitPos.price}`);
     }
 }
 
