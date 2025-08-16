@@ -270,6 +270,15 @@ function selectSequence(sequenceName) {
     // Load the selected sequence
     storyData.loadSequence(sequenceName);
     
+    // Check if this is a live sequence
+    const sequenceVar = window[sequenceName + 'Sequence'];
+    if (sequenceVar && sequenceVar.isLive) {
+        // For live sequences, don't show controls and don't update chart immediately
+        // The live tracking will handle chart updates
+        updateSequenceButtonStyles();
+        return;
+    }
+    
     // Update price scale based on sequence scale
     const scale = getCurrentScale();
     priceScale.updateScale(scale.min, scale.max, scale.base);
@@ -296,15 +305,28 @@ function updateSequenceButtonStyles() {
     const buttons = document.querySelectorAll('.sequence-btn');
     buttons.forEach(button => {
         const sequenceName = button.getAttribute('data-sequence');
+        const sequenceVar = window[sequenceName + 'Sequence'];
         
         if (storyData.currentSequence === sequenceName) {
-            // Active state - purple gradient
-            button.classList.remove('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
-            button.classList.add('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
+            // Active state - different colors for live sequences
+            if (sequenceVar && sequenceVar.isLive) {
+                // Live sequences keep their original colors when active
+                button.classList.add('animate-pulse');
+            } else {
+                // Regular sequences get purple gradient when active
+                button.classList.remove('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
+                button.classList.add('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
+            }
         } else {
-            // Inactive state - slate gradient
-            button.classList.remove('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
-            button.classList.add('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
+            // Inactive state - reset to original colors
+            if (sequenceVar && sequenceVar.isLive) {
+                // Live sequences keep their original colors
+                button.classList.remove('animate-pulse');
+            } else {
+                // Regular sequences get slate gradient
+                button.classList.remove('bg-gradient-to-br', 'from-purple-600', 'via-purple-500', 'to-purple-600', 'hover:from-purple-500', 'hover:via-purple-400', 'hover:to-purple-500', 'border-purple-400/60', 'hover:border-purple-300/80', 'hover:shadow-purple-400/30', 'animate-pulse');
+                button.classList.add('bg-gradient-to-br', 'from-slate-800', 'via-slate-700', 'to-slate-800', 'hover:from-slate-700', 'hover:via-slate-600', 'hover:to-slate-700', 'border-slate-600/40', 'hover:border-slate-500/60', 'hover:shadow-purple-500/20');
+            }
         }
     });
 }

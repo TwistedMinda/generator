@@ -83,21 +83,22 @@
                         <span class="text-shadow-sm">Realtime</span>
                     </div>
                 </button>
+                <button class="sequence-btn bg-gradient-to-br from-orange-600 via-orange-500 to-orange-600 hover:from-orange-500 hover:via-orange-400 hover:to-orange-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-orange-400/60 hover:border-orange-300/80 hover:scale-105 hover:shadow-orange-400/30 backdrop-blur-sm relative overflow-hidden" data-sequence="sol">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">SOL</span>
+                    </div>
+                </button>
+                <button class="sequence-btn bg-gradient-to-br from-yellow-600 via-yellow-500 to-yellow-600 hover:from-yellow-500 hover:via-yellow-400 hover:to-yellow-500 text-white px-3 py-2 rounded-lg text-xs font-bold transition-all duration-300 shadow-lg border border-yellow-400/60 hover:border-yellow-300/80 hover:scale-105 hover:shadow-yellow-400/30 backdrop-blur-sm relative overflow-hidden" data-sequence="btc">
+                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
+                    <div class="relative z-10 flex items-center justify-center">
+                        <span class="text-shadow-sm">BTC</span>
+                    </div>
+                </button>
             </div>
         </div>
         
-        <!-- LIVE Button at Top Right -->
-        <div class="absolute top-4 right-4 z-10">
-            <div class="relative">
-                <button id="live-btn" class="bg-gradient-to-br from-green-600 via-green-500 to-green-600 hover:from-green-500 hover:via-green-400 hover:to-green-500 text-white px-4 py-2 rounded-lg font-bold transition-all duration-300 shadow-lg border border-green-400/60 hover:border-green-300/80 hover:scale-105 hover:shadow-green-400/30 backdrop-blur-sm relative overflow-hidden">
-                    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transform -skew-x-12 -translate-x-full transition-transform duration-700 hover:translate-x-full"></div>
-                    <div class="relative z-10">
-                        <span class="text-shadow-sm">LIVE</span>
-                    </div>
-                </button>
-                
-            </div>
-        </div>
+
         <!-- Controls at Bottom Center -->
         <div id="controls-panel" class="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 hidden">
             <div class="flex items-center space-x-3">
@@ -128,6 +129,8 @@
                <script src="sequences/medium.js"></script>
                <script src="sequences/complex.js"></script>
                <script src="sequences/realtime.js"></script>
+               <script src="sequences/sol.js"></script>
+               <script src="sequences/btc.js"></script>
     <script src="constants.js"></script>
     <script src="story.js"></script>
     <script src="storage.js"></script>
@@ -141,8 +144,7 @@
         initCamera();
         animate();
         
-        // Initialize live button
-        initLiveButton();
+
         
         // Initialize mobile handling
         initMobileHandling();

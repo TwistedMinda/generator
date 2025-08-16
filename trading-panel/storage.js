@@ -1,29 +1,31 @@
 // Live candles storage management
 
 // Get all live candles from localStorage
-function getLiveCandles() {
+function getLiveCandles(symbol = 'solana') {
+    const storageKey = `${LIVE_MODE.STORAGE_KEY}_${symbol}`;
     try {
-        return JSON.parse(localStorage.getItem(LIVE_MODE.STORAGE_KEY)) || [];
+        return JSON.parse(localStorage.getItem(storageKey)) || [];
     } catch (error) {
-        console.error('Failed to parse candles from storage:', error);
+        console.error(`Failed to parse candles from storage for ${symbol}:`, error);
         return [];
     }
 }
 
 // Save all live candles to localStorage
-function saveLiveCandles(candles) {
+function saveLiveCandles(candles, symbol = 'solana') {
+    const storageKey = `${LIVE_MODE.STORAGE_KEY}_${symbol}`;
     try {
-        localStorage.setItem(LIVE_MODE.STORAGE_KEY, JSON.stringify(candles));
+        localStorage.setItem(storageKey, JSON.stringify(candles));
         return true;
     } catch (error) {
-        console.error('Failed to save candles to storage:', error);
+        console.error(`Failed to save candles to storage for ${symbol}:`, error);
         return false;
     }
 }
 
 // Add new price to last candle or create first candle
-function addLivePrice(price) {
-    let candles = getLiveCandles();
+function addLivePrice(price, symbol = 'solana') {
+    let candles = getLiveCandles(symbol);
     
     if (candles.length === 0) {
         // First price - create complete initial candle with realistic OHLC
@@ -42,13 +44,13 @@ function addLivePrice(price) {
         lastCandle.low = Math.min(lastCandle.low, price);
     }
     
-    saveLiveCandles(candles);
+    saveLiveCandles(candles, symbol);
     return candles;
 }
 
 // Create new candle starting with last close price
-function addNewLiveCandle() {
-    let candles = getLiveCandles();
+function addNewLiveCandle(symbol = 'solana') {
+    let candles = getLiveCandles(symbol);
     
     if (candles.length > 0) {
         const lastPrice = candles[candles.length - 1].close;
@@ -61,13 +63,14 @@ function addNewLiveCandle() {
             low: lastPrice
         });
         
-        saveLiveCandles(candles);
+        saveLiveCandles(candles, symbol);
     }
     
     return candles;
 }
 
 // Clear all live candles
-function clearLiveCandles() {
-    localStorage.removeItem(LIVE_MODE.STORAGE_KEY);
+function clearLiveCandles(symbol = 'solana') {
+    const storageKey = `${LIVE_MODE.STORAGE_KEY}_${symbol}`;
+    localStorage.removeItem(storageKey);
 }

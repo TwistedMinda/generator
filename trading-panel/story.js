@@ -21,13 +21,15 @@ class StoryDataGenerator {
             // Reset to step 0 to show the base candle
             this.currentStep = 0;
             
-            // Special handling for realtime sequence
-            if (sequenceName === 'realtime') {
-                // Initialize realtime data
-                realtimeData = new RealtimeDataGenerator();
-                // Start with a single candle
-                this.baseState = [realtimeData.getCurrentCandle()];
-                this.stepChanges = [{}];
+            // Special handling for live sequences
+            if (sequenceVar.isLive) {
+                // Initialize live tracking
+                sequenceVar.startTracking();
+                // Set live mode flag
+                window.isLiveMode = true;
+                // Hide controls for live sequences
+                const controlsPanel = document.getElementById('controls-panel');
+                controlsPanel.classList.add('hidden');
             }
         } else {
             console.error(`Sequence ${sequenceName} not found`);
@@ -113,7 +115,9 @@ const availableSequences = [
     { name: 'simple', displayName: 'Simple Test', description: 'Basic price movement test' },
     { name: 'medium', displayName: 'Medium Test', description: 'Extended price movement with multiple candles' },
     { name: 'complex', displayName: 'Complex Test', description: 'Complex price movement with many candles and dramatic swings' },
-    { name: 'realtime', displayName: 'Realtime', description: 'Live candle generation with realistic price movements' }
+    { name: 'realtime', displayName: 'Realtime', description: 'Live candle generation with realistic price movements' },
+    { name: 'sol', displayName: 'SOL Live', description: 'Real-time Solana price tracking' },
+    { name: 'btc', displayName: 'BTC Live', description: 'Real-time Bitcoin price tracking' }
 ];
 
 // Global story data generator

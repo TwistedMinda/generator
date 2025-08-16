@@ -3,10 +3,11 @@
 // Live price tracking intervals
 let livePriceInterval = null;
 let liveCandleInterval = null;
+let currentSymbol = 'solana'; // Default symbol
 
 // Calculate dynamic live scale based on stored candle data
-function calculateLiveScale() {
-    const candles = getLiveCandles();
+function calculateLiveScale(symbol = currentSymbol) {
+    const candles = getLiveCandles(symbol);
     
     if (candles.length === 0) {
         // Default scale when no data
@@ -67,23 +68,26 @@ function calculateLiveScale() {
     return { min, max, base, markers };
 }
 
-function startLiveTracking() {
+function startLiveTracking(symbol = 'solana') {
     // Stop any existing intervals
     stopLiveTracking();
     
+    // Set current symbol
+    currentSymbol = symbol;
+    
     // Load chart from storage
-    loadLiveChartFromStorage();
+    loadLiveChartFromStorage(symbol);
     
     // Fetch price immediately when starting
-    updateLivePrice();
+    updateLivePrice(symbol);
     
     // Fetch price every 15 seconds
-    livePriceInterval = setInterval(updateLivePrice, LIVE_MODE.PRICE_UPDATE_INTERVAL);
+    livePriceInterval = setInterval(() => updateLivePrice(symbol), LIVE_MODE.PRICE_UPDATE_INTERVAL);
     
     // Create new candle every 1 minute
     liveCandleInterval = setInterval(() => {
-        addNewLiveCandle();
-        loadLiveChartFromStorage();
+        addNewLiveCandle(symbol);
+        loadLiveChartFromStorage(symbol);
     }, LIVE_MODE.CANDLE_INTERVAL);
 }
 
@@ -99,25 +103,24 @@ function stopLiveTracking() {
 }
 
 // Update live price from API
-async function updateLivePrice() {
+async function updateLivePrice(symbol = currentSymbol) {
     try {
-        const price = await fetchSolanaPrice();
+        const price = await fetchCryptoPrice(symbol);
         if (price) {
-            addLivePrice(price);
-            loadLiveChartFromStorage();
+            addLivePrice(price, symbol);
+            loadLiveChartFromStorage(symbol);
         }
     } catch (error) {
-        console.error('Failed to update live price:', error);
+        console.error(`Failed to update live price for ${symbol}:`, error);
     }
 }
 
-
 // Load live chart from storage
-function loadLiveChartFromStorage() {
-    const liveCandles = getLiveCandles();
+function loadLiveChartFromStorage(symbol = currentSymbol) {
+    const liveCandles = getLiveCandles(symbol);
     
     // Recalculate scale based on current data
-    const liveScale = calculateLiveScale();
+    const liveScale = calculateLiveScale(symbol);
     priceScale.updateScale(liveScale.min, liveScale.max, liveScale.base);
     createPriceScaleMarkers();
     
