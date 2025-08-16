@@ -345,7 +345,7 @@ function setupLighting() {
 function getCurrentScale() {
     // Check if live mode is active
     if (window.isLiveMode) {
-        return liveScale;
+        return calculateLiveScale();
     }
     
     // Check if a sequence is loaded
@@ -420,7 +420,7 @@ function createPriceScaleMarkers() {
         context.fillStyle = price === scale.base ? '#ffff00' : '#888888';
         context.font = 'bold 64px Arial';
         context.textAlign = 'right';
-        context.fillText(`$${price}`, 480, 90);
+        context.fillText(`$${price.toFixed(2)}`, 480, 90);
         
         const texture = new THREE.CanvasTexture(canvas);
         const textMaterial = new THREE.MeshBasicMaterial({ 
