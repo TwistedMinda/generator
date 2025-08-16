@@ -85,12 +85,16 @@ class Chart {
             const candleData = this.candles[i];
             const position = this.getCandlePosition(i);
             
-            // Create the candle mesh
+            // Check if this candle is animating and use animated values
+            const animatedValues = this.getAnimatedCandleValues(i);
+            const valuesToUse = animatedValues || candleData;
+            
+            // Create the candle mesh with current (possibly animated) values
             const candleMesh = createCandle(
-                candleData.open,
-                candleData.close,
-                candleData.high,
-                candleData.low,
+                valuesToUse.open,
+                valuesToUse.close,
+                valuesToUse.high,
+                valuesToUse.low,
                 position
             );
             
@@ -101,7 +105,12 @@ class Chart {
         if (this.candles.length > 0) {
             const lastCandle = this.candles[this.candles.length - 1];
             const lastPosition = this.getCandlePosition(this.candles.length - 1);
-            const currentPriceLine = this.createCurrentPriceLine(lastCandle.close, lastPosition);
+            
+            // Use animated close price if animating
+            const animatedValues = this.getAnimatedCandleValues(this.candles.length - 1);
+            const closePrice = animatedValues ? animatedValues.close : lastCandle.close;
+            
+            const currentPriceLine = this.createCurrentPriceLine(closePrice, lastPosition);
             candleMeshes.push(currentPriceLine);
         }
         
@@ -128,18 +137,100 @@ class Chart {
     replaceLastCandle(open, close, high, low) {
         if (this.candles.length === 0) return false;
         
-        const lastCandle = this.candles[this.candles.length - 1];
-        lastCandle.open = open;
-        lastCandle.close = close;
-        lastCandle.high = high;
-        lastCandle.low = low;
+        const lastCandleIndex = this.candles.length - 1;
+        const lastCandle = this.candles[lastCandleIndex];
+        
+        // Start smooth animation to new values
+        this.animateCandleTo(lastCandleIndex, open, close, high, low);
         
         return true;
+    }
+    
+    // Animate a candle to new values smoothly
+    animateCandleTo(candleIndex, targetOpen, targetClose, targetHigh, targetLow, duration = 500) {
+        const candle = this.candles[candleIndex];
+        if (!candle) return;
+        
+        // Store current values as starting point
+        const startValues = {
+            open: candle.open,
+            close: candle.close,
+            high: candle.high,
+            low: candle.low
+        };
+        
+        // Store target values
+        const targetValues = {
+            open: targetOpen,
+            close: targetClose,
+            high: targetHigh,
+            low: targetLow
+        };
+        
+        // Create animation data
+        const animation = {
+            startTime: Date.now(),
+            duration: duration,
+            startValues: startValues,
+            targetValues: targetValues,
+            isActive: true
+        };
+        
+        // Store animation on the candle itself
+        candle.animation = animation;
+        
+        // Update the candle data to target values immediately (for positioning)
+        candle.open = targetOpen;
+        candle.close = targetClose;
+        candle.high = targetHigh;
+        candle.low = targetLow;
+    }
+    
+    // Get current animated values for a candle
+    getAnimatedCandleValues(candleIndex) {
+        const candle = this.candles[candleIndex];
+        if (!candle || !candle.animation || !candle.animation.isActive) {
+            return null; // No animation active
+        }
+        
+        const anim = candle.animation;
+        const elapsed = Date.now() - anim.startTime;
+        const progress = Math.min(elapsed / anim.duration, 1);
+        
+        // Use ease-out cubic for smooth animation
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        
+        // Interpolate between start and target values
+        const currentValues = {
+            open: this.lerp(anim.startValues.open, anim.targetValues.open, easedProgress),
+            close: this.lerp(anim.startValues.close, anim.targetValues.close, easedProgress),
+            high: this.lerp(anim.startValues.high, anim.targetValues.high, easedProgress),
+            low: this.lerp(anim.startValues.low, anim.targetValues.low, easedProgress)
+        };
+        
+        // Mark animation as complete if finished
+        if (progress >= 1) {
+            anim.isActive = false;
+            delete candle.animation;
+        }
+        
+        return currentValues;
+    }
+    
+    // Linear interpolation helper
+    lerp(start, end, t) {
+        return start + (end - start) * t;
+    }
+    
+    // Check if any candles are currently animating
+    hasActiveAnimations() {
+        return this.candles.some(candle => candle.animation && candle.animation.isActive);
     }
 
     // Rebuild chart from complete state
     rebuildFromState(candleStates) {
         this.candles = [];
+        // Clear any ongoing animations
         candleStates.forEach(candle => {
             this.addCandle(candle.open, candle.close, candle.high, candle.low);
         });

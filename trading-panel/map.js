@@ -63,7 +63,22 @@ function startPriceUpdates() {
                 if (!fakeData.isComplete()) {
                     const nextStep = fakeData.getNextStep();
                     if (nextStep !== null) {
-                        chart.rebuildFromState(nextStep.candles);
+                        // Animate each candle to its new values
+                        nextStep.candles.forEach((candleData, index) => {
+                            if (index < chart.candles.length) {
+                                // Animate existing candle
+                                chart.animateCandleTo(index, candleData.open, candleData.close, candleData.high, candleData.low, 300);
+                            } else {
+                                // Add new candle if needed
+                                chart.addCandle(candleData.open, candleData.close, candleData.high, candleData.low);
+                            }
+                        });
+                        
+                        // Remove extra candles if we went backwards
+                        while (chart.candles.length > nextStep.candles.length) {
+                            chart.candles.pop();
+                        }
+                        
                         updateCandles();
                         updateSlider();
                     }
@@ -86,34 +101,30 @@ function updateRealtimeData() {
         realtimeData.start();
     }
     
-    // Update current candle every 3 seconds
+    // Update current candle every 1 second
     if (realtimeData.shouldUpdate()) {
         const updatedCandle = realtimeData.generatePriceMovement();
         realtimeData.lastUpdateTime = Date.now();
         
-        // Update the last candle in the chart
+        // Update the last candle in the chart using animation
         if (chart.candles.length > 0) {
-            const lastCandle = chart.candles[chart.candles.length - 1];
-            lastCandle.close = updatedCandle.close;
-            lastCandle.high = updatedCandle.high;
-            lastCandle.low = updatedCandle.low;
-            
-            // Rebuild chart to show updated candle
-            chart.rebuildFromState(chart.candles);
+            chart.replaceLastCandle(
+                updatedCandle.open,
+                updatedCandle.close,
+                updatedCandle.high,
+                updatedCandle.low
+            );
             updateCandles();
         }
     }
     
-    // Start new candle every 1 minute
+    // Start new candle every 5 seconds
     if (realtimeData.shouldStartNewCandle()) {
         realtimeData.startNewCandle();
         
         // Add new candle to chart
         const newCandle = realtimeData.getCurrentCandle();
         chart.addCandle(newCandle.open, newCandle.close, newCandle.high, newCandle.low);
-        
-        // Rebuild chart to show new candle
-        chart.rebuildFromState(chart.candles);
         updateCandles();
     }
 }
@@ -186,10 +197,25 @@ function setupTestControls() {
             startPauseBtn.className = 'bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-sm font-semibold mb-3 w-full';
         }
         
-        // Jump to specific step
+        // Jump to specific step with animation
         const stepData = fakeData.jumpToStep(targetStep);
         if (stepData) {
-            chart.rebuildFromState(stepData.candles);
+            // Animate each candle to its new values
+            stepData.candles.forEach((candleData, index) => {
+                if (index < chart.candles.length) {
+                    // Animate existing candle
+                    chart.animateCandleTo(index, candleData.open, candleData.close, candleData.high, candleData.low, 300);
+                } else {
+                    // Add new candle if needed
+                    chart.addCandle(candleData.open, candleData.close, candleData.high, candleData.low);
+                }
+            });
+            
+            // Remove extra candles if we went backwards
+            while (chart.candles.length > stepData.candles.length) {
+                chart.candles.pop();
+            }
+            
             updateCandles();
         }
     });
@@ -372,6 +398,11 @@ function animate() {
     // Update camera controls if they exist
     if (typeof updateCamera === 'function') {
         updateCamera();
+    }
+    
+    // Check if any candles are animating and update them
+    if (chart && chart.hasActiveAnimations()) {
+        updateCandles();
     }
     
     renderer.render(scene, camera);
