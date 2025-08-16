@@ -69,8 +69,7 @@ function calculateLiveScale() {
 
 function startLiveTracking() {
     // Stop any existing intervals
-    if (livePriceInterval) clearInterval(livePriceInterval);
-    if (liveCandleInterval) clearInterval(liveCandleInterval);
+    stopLiveTracking();
     
     // Load chart from storage
     loadLiveChartFromStorage();
@@ -86,6 +85,17 @@ function startLiveTracking() {
         addNewLiveCandle();
         loadLiveChartFromStorage();
     }, LIVE_MODE.CANDLE_INTERVAL);
+}
+
+function stopLiveTracking() {
+    if (livePriceInterval) {
+        clearInterval(livePriceInterval);
+        livePriceInterval = null;
+    }
+    if (liveCandleInterval) {
+        clearInterval(liveCandleInterval);
+        liveCandleInterval = null;
+    }
 }
 
 // Update live price from API

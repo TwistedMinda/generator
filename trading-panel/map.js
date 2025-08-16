@@ -255,6 +255,9 @@ function selectSequence(sequenceName) {
         stopPriceUpdates();
     }
     
+    // Stop live intervals if they're running
+    stopLiveTracking();
+    
     // Reset start button to initial state
     const startPauseBtn = document.getElementById('start-pause-btn');
     startPauseBtn.textContent = 'Start';
