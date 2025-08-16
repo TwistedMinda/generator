@@ -13,7 +13,7 @@ class PriceScale {
     updateScale(min, max, base) {
         this.basePrice = base; // Base price at y=0
         const priceRange = max - min;
-        const worldRange = 10; // Fixed world coordinate range
+        const worldRange = PRICE_SCALE_WORLD_RANGE;
         this.unitsPerDollar = worldRange / priceRange;
     }
 

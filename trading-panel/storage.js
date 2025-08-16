@@ -1,7 +1,5 @@
 // Live candles storage management
 
-const LIVE_CANDLES_KEY = 'liveCandles_v2';
-
 // Get all live candles from localStorage
 function getLiveCandles() {
     const candles = JSON.parse(localStorage.getItem(LIVE_CANDLES_KEY)) || [];
