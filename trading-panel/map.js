@@ -367,19 +367,27 @@ function setupLighting() {
 
 // Get current scale settings based on active sequence or live mode
 function getCurrentScale() {
-    // Check if live mode is active
-    if (window.isLiveMode) {
-        return calculateLiveScale();
-    }
+    console.log('getCurrentScale called, currentSequence:', storyData.currentSequence);
     
     // Check if a sequence is loaded
     if (storyData.currentSequence) {
         const sequenceVar = window[storyData.currentSequence + 'Sequence'];
-        if (sequenceVar && sequenceVar.scale) {
-            return sequenceVar.scale;
+        console.log('sequenceVar:', sequenceVar);
+        if (sequenceVar) {
+            // For live sequences, use their specific scale calculation
+            if (sequenceVar.isLive) {
+                console.log('Using live sequence scale calculation');
+                return sequenceVar.updateScale();
+            }
+            // For regular sequences, use their static scale
+            if (sequenceVar.scale) {
+                console.log('Using static sequence scale');
+                return sequenceVar.scale;
+            }
         }
     }
     
+    console.log('Using default fallback scale');
     // Default fallback scale
     return {
         min: 30,

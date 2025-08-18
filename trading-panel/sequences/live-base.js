@@ -16,6 +16,8 @@ class LiveSequence {
     // Live-specific methods
     startTracking() {
         startLiveTracking(this.apiSymbol);
+        // Set live mode flag
+        window.isLiveMode = true;
         // Initialize scale immediately
         const scale = this.updateScale();
         priceScale.updateScale(scale.min, scale.max, scale.base);

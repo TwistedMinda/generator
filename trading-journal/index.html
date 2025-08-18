@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Journal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'trading-blue': '#1e40af',
+                        'trading-green': '#059669',
+                        'trading-red': '#dc2626',
+                        'trading-gray': '#1f2937'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'fade-out': 'fadeOut 0.3s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-in',
+                        'slide-in': 'slideIn 0.4s ease-out',
+                        'count-up': 'countUp 0.6s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1' },
+                            '100%': { opacity: '0' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(0)', opacity: '1' },
+                            '100%': { transform: 'translateY(20px)', opacity: '0' }
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateX(0)', opacity: '1' }
+                        },
+                        countUp: {
+                            '0%': { transform: 'scale(0.8)', opacity: '0' },
+                            '50%': { transform: 'scale(1.1)' },
+                            '100%': { transform: 'scale(1)', opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gradient-to-br from-trading-gray to-gray-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent mb-4">
+                Trading Journal
+            </h1>
+            <p class="text-gray-300 text-lg">Track your trades and analyze your performance</p>
+        </header>
+
+        <!-- Main Controls -->
+        <div class="flex justify-center mb-12">
+            <button id="startTradeBtn" class="bg-gradient-to-r from-trading-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-full text-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 flex items-center space-x-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                <span>Start Trade</span>
+            </button>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Trade History Container -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-blue-300">
+                        <svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Trade History
+                    </h2>
+                    <button id="clearHistoryBtn" class="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 text-red-400 hover:text-red-300 px-3 py-1 rounded-lg text-sm transition-all duration-200 flex items-center space-x-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Clear</span>
+                    </button>
+                </div>
+                <div id="historyContainer" class="min-h-64 flex items-center justify-center">
+                    <p class="text-gray-400 text-center">No trades recorded yet</p>
+                </div>
+            </div>
+
+            <!-- Analytics Container -->
+            <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                <h2 class="text-2xl font-bold mb-6 text-center text-green-300">
+                    <svg class="w-6 h-6 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                    </svg>
+                    Analytics
+                </h2>
+                <div id="analyticsContainer" class="min-h-64 flex items-center justify-center">
+                    <p class="text-gray-400 text-center">Analytics will appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="storage.js"></script>
+    <script src="trade.js"></script>
+    <script src="ui.js"></script>
+</body>
+</html>
